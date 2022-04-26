@@ -17,14 +17,14 @@ def gematria(word : str):
     output : numerical value
 
     Examples :
-        gematria("שלום")
-            376
-        gematria("שלום רב שובך ציפורה")
-            1297
-        gematria("ה'תשפב")
-            5782
-        gematria("גימטריה") == gematria("ערבה")
-            True
+        >>> gematria("שלום")
+        376
+        >>> gematria("שלום רב שובך ציפורה")
+        1297
+        >>> gematria("ה'תשפב")
+        5782
+        >>> gematria("גימטריה") == gematria("ערבה")
+        True
     """
     thousands = 0
     if word[1] in "-'`":
