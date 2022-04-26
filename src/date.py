@@ -38,6 +38,16 @@ class duration(object):
         self._days = int(self._hours / self.HOURS)
         self._hours = int(math.fmod(self._hours, self.HOURS))
 
+    def trim_weeks(self):
+        """
+        Remove all weeks (days>7) so that the duration will be within a single week
+
+        >>> duration(15,2).trim_weeks()
+        duration(1, 2, 0)
+        """
+        self._days = self._days % 7
+        return self
+
     @property
     def days(self):
         return self._days
