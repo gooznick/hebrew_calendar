@@ -4,8 +4,8 @@ import gematria
 class leapYear(object):
     CYCLE = 19
     IS_LEAP = [False] * CYCLE
-    for leap in [3, 6, 8, 11, 13, 17, 19]:  # פרק ו הלכה יא
-        IS_LEAP[leap % CYCLE] = True  # 0 base...
+    for leap in [3, 6, 8, 11, 14, 17, 19]:  # פרק ו הלכה יא
+        IS_LEAP[leap % CYCLE] = True  # 0 based...
 
     @staticmethod
     def is_leap(year):

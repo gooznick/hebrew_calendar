@@ -104,6 +104,8 @@ class months(object):
         duration(6, 22, 648)
         >>> months.molad("ה-תשפב", "ניסן")
         duration(6, 22, 648)
+
+        Can be verified vs https://he-date.info/moladcalculateyear.html
         """
         # פרק ו הלכה יד
         months_num = months.months_till(year, month)

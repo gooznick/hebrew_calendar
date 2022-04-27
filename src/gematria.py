@@ -7,6 +7,21 @@ ends = ("מנצפכ", "םןץףך")
 val.update({e: val[v] for v, e in zip(ends[0], ends[1])})
 
 
+def year_to_num(year):
+    """
+    Convert year to number, it may be a number or a gematria
+
+    Examples :
+        >>> year_to_num("ה'תשפב")
+        5782
+        >>> year_to_num(5782)
+        5782
+    """
+    if type(year) == str:
+        return gematria(year)
+    return int(year)
+
+
 def gematria(word: str):
     """
     Convert a word to it's numeric value

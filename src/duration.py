@@ -11,13 +11,13 @@ class duration(object):
     duration(383, 21, 589)
     """
 
-    PARTS = 1080
-    HOURS = 24
+    PARTS = 1080  # פרק ו הלכה ב
+    HOURS = 24  # פרק ו הלכה ב
 
     def __init__(self, days=0, hours=0, parts=0):
         self._days = days
         self._hours = hours
-        self._parts = paduration(15,2)rts  # חלקים
+        self._parts = parts  # חלקים
 
         self.__normalize()
 
@@ -106,5 +106,5 @@ class duration(object):
         return res
 
 
-sinodal_month = duration(29, 12, 793) # פרק ו הלכה ד
-first_month = duration(2, 5, 204) #  פרק ו הלכה ח
+sinodal_month = duration(29, 12, 793)  # פרק ו הלכה ד
+first_month = duration(2, 5, 204)  # פרק ו הלכה ח
