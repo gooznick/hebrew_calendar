@@ -107,4 +107,4 @@ class duration(object):
 
 
 sinodal_month = duration(29, 12, 793)  # פרק ו הלכה ד
-first_month = duration(2, 5, 204)  # פרק ו הלכה ח
+first_month = duration(1, 5, 204)  # פרק ו הלכה ח
