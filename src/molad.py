@@ -212,20 +212,20 @@ class Months:
         return months_head, activated
 
     @staticmethod
-    def first_month_head(year: typing.Union[int, str]):
+    def year_begin_weekday(year: typing.Union[int, str]):
         """
         Apply postpone rules on first month's molad (תשרי), and get day of month's head ראש חודש
 
         Examples:
-            >>> Months.first_month_head(5782)
+            >>> Months.year_begin_weekday(5782)
             (3, [False, False, False, False])
-            >>> Months.first_month_head("ה-תשסו")
+            >>> Months.year_begin_weekday("ה-תשסו")
             (3, [False, False, False, True])
-            >>> Months.first_month_head("ה-תשפט")
+            >>> Months.year_begin_weekday("ה-תשפט")
             (5, [True, False, True, False])
-            >>> Months.first_month_head("ה-תשפו")
+            >>> Months.year_begin_weekday("ה-תשפו")
             (3, [False, True, False, False])
-            >>> Months.first_month_head("ה-תשפח")
+            >>> Months.year_begin_weekday("ה-תשפח")
             (7, [True, False, False, False])
 
         Verified with https://he-date.info/moladcalculateyear.html
@@ -250,9 +250,9 @@ class Months:
             <YearType.PARTIAL: 1>
         """
         is_leap = leapYear.is_leap(year)
-        first_month_head, _ = Months.first_month_head(year)
-        next_first_month_head, _ = Months.first_month_head(year + 1)
-        days_diff = (next_first_month_head - first_month_head - 1) % 7
+        year_begin_weekday, _ = Months.year_begin_weekday(year)
+        next_first_month_head, _ = Months.year_begin_weekday(year + 1)
+        days_diff = (next_first_month_head - year_begin_weekday - 1) % 7
         return YEAR_TYPES[is_leap][days_diff]
 
     @staticmethod
@@ -291,6 +291,41 @@ class Months:
         """
 
         return sum(Months.months_length(year))
+
+    @staticmethod
+    def weekday(
+        year: typing.Union[int, str],
+        month: typing.Union[int, str],
+        day_month: typing.Union[int, str],
+    ):
+        """
+        Find the weekday of a specific date
+
+        Example:
+            >>> Months.weekday(5782, 9, 1)
+            1
+            >>> Months.weekday(5782, 1, 1)
+            3
+            >>> Months.weekday(5786, 12, 13)
+            4
+        """
+
+        # find day of rosh hashana
+        year_begin_weekday, _ = Months.year_begin_weekday(year)
+        # find days to the begining of the month
+        month = gematria.month_to_num(leapYear.is_leap(year), month)
+        days_from_year_begin = sum(Months.months_length(year)[: month - 1])
+        # days from month begin
+        if type(day_month) == str:
+            day_month = gematria.str_to_num(day_month)
+        days_in_month = day_month - 1
+        weekday = (
+            year_begin_weekday + days_from_year_begin + days_in_month - 1
+        ) % 7 + 1
+        return weekday
+
+
+Months.weekday(5782, 9, 1)
 
 
 def test_year_type():
