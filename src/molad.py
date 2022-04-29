@@ -2,6 +2,19 @@ from leap_years import leapYear
 import duration
 import gematria
 import typing
+from enum import Enum
+
+
+class yearType(Enum):
+    MISSING = 1  # חסרה
+    ORDINAL = 2  # כסדרה
+    FULL = 3  # שלמה
+
+
+YEAR_TYPES = {
+    False: {2: yearType.MISSING, 3: yearType.ORDINAL, 4: yearType.FULL},  # פרק ח הלכה ז
+    True: {4: yearType.MISSING, 5: yearType.ORDINAL, 6: yearType.FULL},  # פרק ח הלכה ח
+}
 
 
 class months(object):
@@ -210,6 +223,30 @@ class months(object):
         is_former_leap = leapYear.is_leap(year - 1)
         molad = months.molad(year, 1)
         return months.apply_postpone_rules(molad, is_former_leap, is_leap)
+
+    @staticmethod
+    def year_type(year: typing.Union[int, str]):
+        """
+        Check the type of the year (חסרה, כסדרה, שלמה)
+
+        Examples:
+            >>> months.year_type(5782)
+            <yearType.ORDINAL: 2>
+            >>> months.year_type(5783)
+            <yearType.FULL: 3>
+            >>> months.year_type(5784)
+            <yearType.MISSING: 1>
+        """
+        is_leap = leapYear.is_leap(year)
+        first_month_head, _ = months.first_month_head(year)
+        next_first_month_head, _ = months.first_month_head(year + 1)
+        days_diff = (next_first_month_head - first_month_head - 1) % 7
+        return YEAR_TYPES[is_leap][days_diff]
+
+
+def test_year_type():
+    for year in range(5000, 6000):
+        months.year_type(year)
 
 
 def test_months_in_years_o_1_():
