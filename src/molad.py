@@ -1,11 +1,12 @@
 from leap_years import leapYear
 import duration
 import gematria
+import typing
 
 
 class months(object):
     @staticmethod
-    def _months_in_years_o_n_(year, begin=1):
+    def _months_in_years_o_n_(end: typing.Union[int, str], begin: int = 1):
         """
         Return number of months from the beginning. O(n) method.
 
@@ -16,14 +17,14 @@ class months(object):
         >>> months._months_in_years_o_n_("ה'תשפב")
         71501
         """
-        year = gematria.year_to_num(year)
+        end = gematria.year_to_num(end)
         months = 0
-        for y in range(begin, year):
+        for y in range(begin, end):
             months += leapYear.months(y)
         return months
 
     @staticmethod
-    def _months_in_years_o_1_(year, begin=1):
+    def _months_in_years_o_1_(end: typing.Union[int, str], begin: int = 1):
         """
         Return number of months from the beginning. O(1) method.
 
@@ -34,22 +35,24 @@ class months(object):
         >>> months._months_in_years_o_1_("ה'תשפב")
         71501
         """
-        year = gematria.year_to_num(year)
+        end = gematria.year_to_num(end)
         months = 0
         begin_cycle = leapYear.cycle(begin)
-        end_cycle = leapYear.cycle(year)
+        end_cycle = leapYear.cycle(end)
         first_cycle_end = begin - begin_cycle + 19 + 1
-        last_cycle_begin = year - end_cycle + 1
+        last_cycle_begin = end - end_cycle + 1
         for y in range(begin, first_cycle_end):
             months += leapYear.months(y)
         cycles = (last_cycle_begin - first_cycle_end) // 19  # may be negative. it's o.k
         months += cycles * leapYear.months_in_cycle()
-        for y in range(last_cycle_begin, year):
+        for y in range(last_cycle_begin, end):
             months += leapYear.months(y)
         return max(0, months)
 
     @staticmethod
-    def months_till(year, month, begin=1):
+    def months_till(
+        year: typing.Union[int, str], month: typing.Union[int, str], begin=1
+    ):
         """
         Count months until specific date(year,month)
 
@@ -70,7 +73,7 @@ class months(object):
         )
 
     @staticmethod
-    def molad(year, month):
+    def molad(year: typing.Union[int, str], month: typing.Union[int, str]):
         """
         Calculate he mean new moon of a specific month
 
@@ -184,7 +187,7 @@ class months(object):
         return months_head, activated
 
     @staticmethod
-    def first_month_head(year):
+    def first_month_head(year: typing.Union[int, str]):
         """
         Apply postpone rules on first month's molad (תשרי), and get day of month's head ראש חודש
 
