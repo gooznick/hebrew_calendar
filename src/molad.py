@@ -5,49 +5,50 @@ import gematria
 
 class months(object):
 
+
     @staticmethod
-    def _months_in_years(year, begin=1):
+    def _months_in_years_o_n_(year, begin=1):
         """
         Return number of months from the beginning. O(n) method.
 
-        >>> months._months_in_years(0) # first year is 1
+        >>> months._months_in_years_o_n_(1) # first year is 1
         0
-        >>> months._months_in_years(5782)
-        71514
-        >>> months._months_in_years("ה'תשפב")
-        71514
+        >>> months._months_in_years_o_n_(5782)
+        71501
+        >>> months._months_in_years_o_n_("ה'תשפב")
+        71501
         """
         year = gematria.year_to_num(year)
         months = 0
-        for y in range(begin, year + 1):
+        for y in range(begin, year):
             months += leapYear.months(y)       
         return months
 
     @staticmethod
-    def _months_in_years_o1(year, begin=1):
+    def _months_in_years_o_1_(year, begin=1):
         """
         Return number of months from the beginning. O(1) method.
 
-        >>> months._months_in_years(0) # first year is 1
+        >>> months._months_in_years_o_1_(1) # first year is 1
         0
-        >>> months._months_in_years(5782)
-        71514
-        >>> months._months_in_years("ה'תשפב")
-        71514
+        >>> months._months_in_years_o_1_(5782)
+        71501
+        >>> months._months_in_years_o_1_("ה'תשפב")
+        71501
         """
         year = gematria.year_to_num(year)
         months = 0
         begin_cycle = leapYear.cycle(begin)
         end_cycle = leapYear.cycle(year)
-        first_cycle_end = min(begin-begin_cycle+19-1, year+1)
-        last_cycle_begin = year-end_cycle
+        first_cycle_end = begin-begin_cycle+19+1
+        last_cycle_begin = year-end_cycle+1
         for y in range(begin, first_cycle_end):
             months += leapYear.months(y)
-        cycles = (last_cycle_begin-first_cycle_end)//19
-        months += 19*leapYear.months_in_cycle()
-        for y in range(last_cycle_begin, year + 1):
+        cycles = (last_cycle_begin-first_cycle_end)//19 # may be negative. it's o.k
+        months += cycles*leapYear.months_in_cycle()
+        for y in range(last_cycle_begin, year):
             months += leapYear.months(y)
-        return months
+        return max(0,months)
 
     @staticmethod
     def months_till(year, month, begin=1):
@@ -65,7 +66,7 @@ class months(object):
             13
         """
         year = gematria.year_to_num(year)
-        months_in_years = months._months_in_years(year - 1, begin)
+        months_in_years = months._months_in_years_o_1_(year, begin)
         return months_in_years + gematria.month_to_num(leapYear.is_leap(year), month) - 1
 
     @staticmethod
@@ -199,18 +200,11 @@ class months(object):
         molad = months.molad(year, 1)
         return months.apply_postpone_rules(molad, is_former_leap, is_leap)
 
-# a = months._months_in_years_o_n_(40)
-# b = months._months_in_years(40)
-# b = months._months_in_years(40)
 
-# import time
-# t= time.time()
-# # print(months.first_month_head(5810))
-# for y in range(5700,7000):
-#     day, p = months.first_month_head(y)
-# print (time.time() -t)
-# #5688 2 [False, False, False, True]
-# #5766 2 [False, False, False, True]
-# #6013 2 [False, False, False, True]
-# #6111 2 [False, False, False, True]
-# months.first_month_head(5782)
+def test_months_in_years_o_1_():
+    """
+    Test computation on months_in_years_o(1) vs o(n) simpler computation
+    """
+    for begin in range(0,100):
+        for end in range(0,100):
+            assert months._months_in_years_o_1_(end,begin) ==  months._months_in_years_o_n_(end,begin)
