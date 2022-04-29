@@ -1,39 +1,51 @@
-from leap_years import leapYear
-import duration
-import gematria
+"""
+New moon computations
+"""
 import typing
 from enum import Enum
 
+from leap_years import leapYear
+import duration
+import gematria
 
-class yearType(Enum):
-    MISSING = 1  # חסרה
+
+class YearType(Enum):
+    """
+    Year types according to פרק ח הלכה ז
+    """
+
+    PARTIAL = 1  # חסרה
     ORDINAL = 2  # כסדרה
     FULL = 3  # שלמה
 
 
 YEAR_TYPES = {
-    False: {2: yearType.MISSING, 3: yearType.ORDINAL, 4: yearType.FULL},  # פרק ח הלכה ז
-    True: {4: yearType.MISSING, 5: yearType.ORDINAL, 6: yearType.FULL},  # פרק ח הלכה ח
+    False: {2: YearType.PARTIAL, 3: YearType.ORDINAL, 4: YearType.FULL},  # פרק ח הלכה ז
+    True: {4: YearType.PARTIAL, 5: YearType.ORDINAL, 6: YearType.FULL},  # פרק ח הלכה ח
 }
 
 
-class months(object):
+class Months:
+    """
+    Class for months computations
+    """
+
     @staticmethod
     def _months_in_years_o_n_(end: typing.Union[int, str], begin: int = 1):
         """
         Return number of months from the beginning. O(n) method.
 
-        >>> months._months_in_years_o_n_(1) # first year is 1
+        >>> Months._months_in_years_o_n_(1) # first year is 1
         0
-        >>> months._months_in_years_o_n_(5782)
+        >>> Months._months_in_years_o_n_(5782)
         71501
-        >>> months._months_in_years_o_n_("ה'תשפב")
+        >>> Months._months_in_years_o_n_("ה'תשפב")
         71501
         """
         end = gematria.year_to_num(end)
         months = 0
-        for y in range(begin, end):
-            months += leapYear.months(y)
+        for year in range(begin, end):
+            months += leapYear.months(year)
         return months
 
     @staticmethod
@@ -41,11 +53,11 @@ class months(object):
         """
         Return number of months from the beginning. O(1) method.
 
-        >>> months._months_in_years_o_1_(1) # first year is 1
+        >>> Months._months_in_years_o_1_(1) # first year is 1
         0
-        >>> months._months_in_years_o_1_(5782)
+        >>> Months._months_in_years_o_1_(5782)
         71501
-        >>> months._months_in_years_o_1_("ה'תשפב")
+        >>> Months._months_in_years_o_1_("ה'תשפב")
         71501
         """
         end = gematria.year_to_num(end)
@@ -54,12 +66,12 @@ class months(object):
         end_cycle = leapYear.cycle(end)
         first_cycle_end = begin - begin_cycle + 19 + 1
         last_cycle_begin = end - end_cycle + 1
-        for y in range(begin, first_cycle_end):
-            months += leapYear.months(y)
+        for year in range(begin, first_cycle_end):
+            months += leapYear.months(year)
         cycles = (last_cycle_begin - first_cycle_end) // 19  # may be negative. it's o.k
         months += cycles * leapYear.months_in_cycle()
-        for y in range(last_cycle_begin, end):
-            months += leapYear.months(y)
+        for year in range(last_cycle_begin, end):
+            months += leapYear.months(year)
         return max(0, months)
 
     @staticmethod
@@ -70,17 +82,17 @@ class months(object):
         Count months until specific date(year,month)
 
         Examples:
-            >>> months.months_till(1, 1)
+            >>> Months.months_till(1, 1)
             0
-            >>> months.months_till(1, 2)
+            >>> Months.months_till(1, 2)
             1
-            >>> months.months_till(2, 1)
+            >>> Months.months_till(2, 1)
             12
-            >>> months.months_till(2, 2)
+            >>> Months.months_till(2, 2)
             13
         """
         year = gematria.year_to_num(year)
-        months_in_years = months._months_in_years_o_1_(year, begin)
+        months_in_years = Months._months_in_years_o_1_(year, begin)
         return (
             months_in_years + gematria.month_to_num(leapYear.is_leap(year), month) - 1
         )
@@ -91,19 +103,19 @@ class months(object):
         Calculate he mean new moon of a specific month
 
         Examples:
-            >>> months.molad(1, "תשרי")
+            >>> Months.molad(1, "תשרי")
             duration(2, 5, 204)
-            >>> months.molad(5782, "ניסן")
+            >>> Months.molad(5782, "ניסן")
             duration(6, 22, 648)
-            >>> months.molad("ה-תשפב", "ניסן")
+            >>> Months.molad("ה-תשפב", "ניסן")
             duration(6, 22, 648)
-            >>> months.molad(5782, 1)
+            >>> Months.molad(5782, 1)
             duration(3, 5, 497)
 
         Can be verified vs https://he-date.info/moladcalculateyear.html
         """
         # פרק ו הלכה יד
-        months_num = months.months_till(year, month)
+        months_num = Months.months_till(year, month)
         molad = duration.first_month + duration.sinodal_month * months_num
         molad.trim_weeks()
         return molad
@@ -114,12 +126,12 @@ class months(object):
         rule of לא אדו ראש
         from פרק ז הלכה א
 
-        >>> months.potpone_rule_1(1)
+        >>> Months.potpone_rule_1(1)
         (2, True)
-        >>> months.potpone_rule_1(2)
+        >>> Months.potpone_rule_1(2)
         (2, False)
         """
-        fobidden_days = [d for d in [1, 4, 6]]
+        fobidden_days = [1, 4, 6]
         if day in fobidden_days:
             return day + 1, True
         return day, False
@@ -129,9 +141,9 @@ class months(object):
         """
         old molad rule פרק ז הלכה ב
 
-        >>> months.potpone_rule_2(duration.duration(1, 18, 5))
+        >>> Months.potpone_rule_2(duration.duration(1, 18, 5))
         (2, True)
-        >>> months.potpone_rule_2(duration.duration(3, 17, 5))
+        >>> Months.potpone_rule_2(duration.duration(3, 17, 5))
         (3, False)
         """
         if molad.hours >= 18:
@@ -145,9 +157,9 @@ class months(object):
         from פרק ז הלכה ד
         Note : another postpone will be done by rule1 (to Thursday)
 
-        >>> months.potpone_rule_3(duration.duration(3, 10, 5), False)
+        >>> Months.potpone_rule_3(duration.duration(3, 10, 5), False)
         (4, True)
-        >>> months.potpone_rule_3(duration.duration(3, 17, 5), True)
+        >>> Months.potpone_rule_3(duration.duration(3, 17, 5), True)
         (3, False)
         """
 
@@ -164,9 +176,9 @@ class months(object):
         rule בט"ו תקפ"ט אחר עיבור עקור מלשרוש
         from פרק ז הלכה ה
 
-        >>> months.potpone_rule_4(duration.duration(2, 18, 600), True)
+        >>> Months.potpone_rule_4(duration.duration(2, 18, 600), True)
         (3, True)
-        >>> months.potpone_rule_4(duration.duration(1, 3, 2), True)
+        >>> Months.potpone_rule_4(duration.duration(1, 3, 2), True)
         (1, False)
         """
 
@@ -184,18 +196,18 @@ class months(object):
         """
         Apply postpone rules on first month's molad (תשרי), and get day of month's head ראש חודש
 
-        >>> months.apply_postpone_rules(duration.duration(1,4,5) ,True, True)
+        >>> Months.apply_postpone_rules(duration.duration(1,4,5) ,True, True)
         (2, [True, False, False, False])
         """
         activated = [False] * 4
-        months_head, activated[1] = months.potpone_rule_2(molad_tishrei)
+        months_head, activated[1] = Months.potpone_rule_2(molad_tishrei)
         if not any(activated):
-            months_head, activated[2] = months.potpone_rule_3(molad_tishrei, is_leap)
+            months_head, activated[2] = Months.potpone_rule_3(molad_tishrei, is_leap)
         if not any(activated):
-            months_head, activated[3] = months.potpone_rule_4(
+            months_head, activated[3] = Months.potpone_rule_4(
                 molad_tishrei, is_former_leap
             )
-        months_head, activated[0] = months.potpone_rule_1(months_head)
+        months_head, activated[0] = Months.potpone_rule_1(months_head)
 
         return months_head, activated
 
@@ -205,15 +217,15 @@ class months(object):
         Apply postpone rules on first month's molad (תשרי), and get day of month's head ראש חודש
 
         Examples:
-            >>> months.first_month_head(5782)
+            >>> Months.first_month_head(5782)
             (3, [False, False, False, False])
-            >>> months.first_month_head("ה-תשסו")
+            >>> Months.first_month_head("ה-תשסו")
             (3, [False, False, False, True])
-            >>> months.first_month_head("ה-תשפט")
+            >>> Months.first_month_head("ה-תשפט")
             (5, [True, False, True, False])
-            >>> months.first_month_head("ה-תשפו")
+            >>> Months.first_month_head("ה-תשפו")
             (3, [False, True, False, False])
-            >>> months.first_month_head("ה-תשפח")
+            >>> Months.first_month_head("ה-תשפח")
             (7, [True, False, False, False])
 
         Verified with https://he-date.info/moladcalculateyear.html
@@ -221,8 +233,8 @@ class months(object):
         year = gematria.year_to_num(year)
         is_leap = leapYear.is_leap(year)
         is_former_leap = leapYear.is_leap(year - 1)
-        molad = months.molad(year, 1)
-        return months.apply_postpone_rules(molad, is_former_leap, is_leap)
+        molad = Months.molad(year, 1)
+        return Months.apply_postpone_rules(molad, is_former_leap, is_leap)
 
     @staticmethod
     def year_type(year: typing.Union[int, str]):
@@ -230,23 +242,63 @@ class months(object):
         Check the type of the year (חסרה, כסדרה, שלמה)
 
         Examples:
-            >>> months.year_type(5782)
-            <yearType.ORDINAL: 2>
-            >>> months.year_type(5783)
-            <yearType.FULL: 3>
-            >>> months.year_type(5784)
-            <yearType.MISSING: 1>
+            >>> Months.year_type(5782)
+            <YearType.ORDINAL: 2>
+            >>> Months.year_type(5783)
+            <YearType.FULL: 3>
+            >>> Months.year_type(5784)
+            <YearType.PARTIAL: 1>
         """
         is_leap = leapYear.is_leap(year)
-        first_month_head, _ = months.first_month_head(year)
-        next_first_month_head, _ = months.first_month_head(year + 1)
+        first_month_head, _ = Months.first_month_head(year)
+        next_first_month_head, _ = Months.first_month_head(year + 1)
         days_diff = (next_first_month_head - first_month_head - 1) % 7
         return YEAR_TYPES[is_leap][days_diff]
 
+    @staticmethod
+    def months_length(year: typing.Union[int, str]):
+        """
+        Check months lengths of a year
+
+        according to פרק ח הלכה ה
+
+        Example:
+            >>> Months.months_length(5782)
+            [30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30]
+        """
+        months_num = leapYear.months(year)
+        year_type = Months.year_type(year)
+        lengths = ([30, 29] * 7)[:months_num]
+
+        # פרק ח הלכה ו
+        if year_type == YearType.FULL:
+            lengths[1] = 30
+        if year_type == YearType.PARTIAL:
+            lengths[2] = 29
+
+        return lengths
+
+    @staticmethod
+    def year_days(year: typing.Union[int, str]):
+        """
+        Number of days in a year
+
+        Example:
+            >>> Months.year_days(5780)
+            355
+            >>> [Months.year_days(y) for y in range(5780,5790)]
+            [355, 353, 384, 355, 383, 355, 354, 385, 355, 354]
+        """
+
+        return sum(Months.months_length(year))
+
 
 def test_year_type():
+    """
+    Test year type does not fail on
+    """
     for year in range(5000, 6000):
-        months.year_type(year)
+        Months.year_type(year)
 
 
 def test_months_in_years_o_1_():
@@ -255,6 +307,8 @@ def test_months_in_years_o_1_():
     """
     for begin in range(0, 100):
         for end in range(0, 100):
-            assert months._months_in_years_o_1_(
+            assert Months._months_in_years_o_1_(  # pylint: disable=W0212
                 end, begin
-            ) == months._months_in_years_o_n_(end, begin)
+            ) == Months._months_in_years_o_n_(  # pylint: disable=W0212
+                end, begin
+            )
