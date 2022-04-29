@@ -249,6 +249,7 @@ class Months:
             >>> Months.year_type(5784)
             <YearType.PARTIAL: 1>
         """
+        year = gematria.year_to_num(year)
         is_leap = leapYear.is_leap(year)
         year_begin_weekday, _ = Months.year_begin_weekday(year)
         next_first_month_head, _ = Months.year_begin_weekday(year + 1)
@@ -308,6 +309,8 @@ class Months:
             3
             >>> Months.weekday(5786, 12, 13)
             4
+            >>> Months.weekday("ה-תשלז", "טבת", "ז")
+            3
         """
 
         # find day of rosh hashana
@@ -323,9 +326,6 @@ class Months:
             year_begin_weekday + days_from_year_begin + days_in_month - 1
         ) % 7 + 1
         return weekday
-
-
-Months.weekday(5782, 9, 1)
 
 
 def test_year_type():
