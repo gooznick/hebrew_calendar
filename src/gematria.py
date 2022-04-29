@@ -20,6 +20,7 @@ def _remove_vowels(s):
 def _remove_list_vowels(month_list):
     return [_remove_vowels(m) for m in month_list]
 
+
 MONTHS_NO_LEAP = [
     "תשרי",
     "חשון",
@@ -46,10 +47,11 @@ MONTHS_SHORT = {True: MONTHS_LEAP_SHORT, False: MONTHS_NO_LEAP_SHORT}
 MONTHS = {True: MONTHS_LEAP, False: MONTHS_NO_LEAP}
 
 # Days names
-DAYS = {chr(ord("א")+i):i+1 for i in range(7)}
+DAYS = {chr(ord("א") + i): i + 1 for i in range(7)}
 DAYS["ש"] = 7
 DAYS_NAMES = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"]
-DAYS.update({name:ind+1 for ind,name in enumerate(DAYS_NAMES)})
+DAYS.update({name: ind + 1 for ind, name in enumerate(DAYS_NAMES)})
+
 
 def num_to_day(day: int):
     """
@@ -59,7 +61,8 @@ def num_to_day(day: int):
         >>> num_to_day(1)
         'ראשון'
     """
-    return DAYS_NAMES[day-1]
+    return DAYS_NAMES[day - 1]
+
 
 def day_to_num(day: str):
     """
@@ -71,9 +74,10 @@ def day_to_num(day: str):
         >>> day_to_num(7)
         7
     """
-    if type(day)==str:
+    if type(day) == str:
         return day_str_to_num(day)
     return day
+
 
 def day_str_to_num(day: str):
     """
@@ -106,7 +110,6 @@ def str_to_num(word: str):
     return sum([val.get(c, 0) for c in word])
 
 
-
 def year_str_to_num(word: str):
     """
     Convert a word to it's numeric value
@@ -123,7 +126,7 @@ def year_str_to_num(word: str):
     if word[1] in "-'`":
         thousands = val.get(word[0], 0) * 1000
         word = word[2:]
-    return thousands + str_to_num(word) 
+    return thousands + str_to_num(word)
 
 
 def year_to_num(year):
@@ -140,6 +143,7 @@ def year_to_num(year):
         return year_str_to_num(year)
     return int(year)
 
+
 def num_to_month(is_leap_year: bool, month: int):
     """
     Convert a number to month name
@@ -149,14 +153,16 @@ def num_to_month(is_leap_year: bool, month: int):
         'תשרי'
     """
     months_list = MONTHS[is_leap_year]
-    return months_list[month-1]
+    return months_list[month - 1]
+
 
 def month_str_to_num(is_leap_year: bool, month: str):
     """
     Convert month string to ordered month #, according to leap year
     """
     months_list = MONTHS_SHORT[is_leap_year]
-    return months_list.index(_remove_vowels(month))+1
+    return months_list.index(_remove_vowels(month)) + 1
+
 
 def month_to_num(is_leap_year: bool, month: typing.Union[int, str]):
     """
@@ -167,8 +173,6 @@ def month_to_num(is_leap_year: bool, month: typing.Union[int, str]):
     >>> month_to_num(False, "חשון")
     2
     """
-    if type(month)==int:
+    if type(month) == int:
         return month
     return month_str_to_num(is_leap_year, month)
-
-

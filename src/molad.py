@@ -4,8 +4,6 @@ import gematria
 
 
 class months(object):
-
-
     @staticmethod
     def _months_in_years_o_n_(year, begin=1):
         """
@@ -21,7 +19,7 @@ class months(object):
         year = gematria.year_to_num(year)
         months = 0
         for y in range(begin, year):
-            months += leapYear.months(y)       
+            months += leapYear.months(y)
         return months
 
     @staticmethod
@@ -40,15 +38,15 @@ class months(object):
         months = 0
         begin_cycle = leapYear.cycle(begin)
         end_cycle = leapYear.cycle(year)
-        first_cycle_end = begin-begin_cycle+19+1
-        last_cycle_begin = year-end_cycle+1
+        first_cycle_end = begin - begin_cycle + 19 + 1
+        last_cycle_begin = year - end_cycle + 1
         for y in range(begin, first_cycle_end):
             months += leapYear.months(y)
-        cycles = (last_cycle_begin-first_cycle_end)//19 # may be negative. it's o.k
-        months += cycles*leapYear.months_in_cycle()
+        cycles = (last_cycle_begin - first_cycle_end) // 19  # may be negative. it's o.k
+        months += cycles * leapYear.months_in_cycle()
         for y in range(last_cycle_begin, year):
             months += leapYear.months(y)
-        return max(0,months)
+        return max(0, months)
 
     @staticmethod
     def months_till(year, month, begin=1):
@@ -67,7 +65,9 @@ class months(object):
         """
         year = gematria.year_to_num(year)
         months_in_years = months._months_in_years_o_1_(year, begin)
-        return months_in_years + gematria.month_to_num(leapYear.is_leap(year), month) - 1
+        return (
+            months_in_years + gematria.month_to_num(leapYear.is_leap(year), month) - 1
+        )
 
     @staticmethod
     def molad(year, month):
@@ -105,9 +105,8 @@ class months(object):
         """
         fobidden_days = [d for d in [1, 4, 6]]
         if day in fobidden_days:
-            return day+1, True
+            return day + 1, True
         return day, False
-
 
     @staticmethod
     def potpone_rule_2(molad: duration):
@@ -119,8 +118,8 @@ class months(object):
         >>> months.potpone_rule_2(duration.duration(3, 17, 5))
         (3, False)
         """
-        if molad.hours>=18:
-            return molad.days+1, True
+        if molad.hours >= 18:
+            return molad.days + 1, True
         return molad.days, False
 
     @staticmethod
@@ -136,10 +135,12 @@ class months(object):
         (3, False)
         """
 
-        if not is_leap and (molad.days==3 and ((molad.hours==9 and molad.parts>=204) or molad.hours>9)):
-            return molad.days+1, True
+        if not is_leap and (
+            molad.days == 3
+            and ((molad.hours == 9 and molad.parts >= 204) or molad.hours > 9)
+        ):
+            return molad.days + 1, True
         return molad.days, False
-
 
     @staticmethod
     def potpone_rule_4(molad: duration, is_former_leap: bool):
@@ -153,12 +154,17 @@ class months(object):
         (1, False)
         """
 
-        if is_former_leap and (molad.days==2 and ((molad.hours==12+3 and molad.parts>=589) or molad.hours>12+3)):
-            return molad.days+1, True
+        if is_former_leap and (
+            molad.days == 2
+            and ((molad.hours == 12 + 3 and molad.parts >= 589) or molad.hours > 12 + 3)
+        ):
+            return molad.days + 1, True
         return molad.days, False
 
     @staticmethod
-    def apply_postpone_rules(molad_tishrei: duration, is_former_leap: bool, is_leap: bool):
+    def apply_postpone_rules(
+        molad_tishrei: duration, is_former_leap: bool, is_leap: bool
+    ):
         """
         Apply postpone rules on first month's molad (תשרי), and get day of month's head ראש חודש
 
@@ -170,7 +176,9 @@ class months(object):
         if not any(activated):
             months_head, activated[2] = months.potpone_rule_3(molad_tishrei, is_leap)
         if not any(activated):
-            months_head, activated[3] = months.potpone_rule_4(molad_tishrei, is_former_leap)
+            months_head, activated[3] = months.potpone_rule_4(
+                molad_tishrei, is_former_leap
+            )
         months_head, activated[0] = months.potpone_rule_1(months_head)
 
         return months_head, activated
@@ -196,7 +204,7 @@ class months(object):
         """
         year = gematria.year_to_num(year)
         is_leap = leapYear.is_leap(year)
-        is_former_leap = leapYear.is_leap(year-1)
+        is_former_leap = leapYear.is_leap(year - 1)
         molad = months.molad(year, 1)
         return months.apply_postpone_rules(molad, is_former_leap, is_leap)
 
@@ -205,6 +213,8 @@ def test_months_in_years_o_1_():
     """
     Test computation on months_in_years_o(1) vs o(n) simpler computation
     """
-    for begin in range(0,100):
-        for end in range(0,100):
-            assert months._months_in_years_o_1_(end,begin) ==  months._months_in_years_o_n_(end,begin)
+    for begin in range(0, 100):
+        for end in range(0, 100):
+            assert months._months_in_years_o_1_(
+                end, begin
+            ) == months._months_in_years_o_n_(end, begin)

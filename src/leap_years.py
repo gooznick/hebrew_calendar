@@ -1,12 +1,12 @@
 import gematria
 import typing
 
+
 class leapYear(object):
     CYCLE = 19
     IS_LEAP = [False] * CYCLE
     for leap in [3, 6, 8, 11, 14, 17, 19]:  # פרק ו הלכה יא
-        IS_LEAP[leap-1] = True # 0 based list
-
+        IS_LEAP[leap - 1] = True  # 0 based list
 
     @staticmethod
     def cycle(year: typing.Union[int, str]):
@@ -22,10 +22,10 @@ class leapYear(object):
             6
             >>> leapYear.cycle("ה-תשפב")
             6
-        
+
         Verified with https://he-date.info/moladcalculateyear.html
         """
-        return ((gematria.year_to_num(year)-1)%19) + 1
+        return ((gematria.year_to_num(year) - 1) % 19) + 1
 
     @staticmethod
     def is_leap(year: typing.Union[int, str]):
@@ -38,7 +38,7 @@ class leapYear(object):
         True
         """
         cycle = leapYear.cycle(year)
-        return leapYear.IS_LEAP[cycle-1]
+        return leapYear.IS_LEAP[cycle - 1]
 
     @staticmethod
     def months(year: typing.Union[int, str]):
@@ -62,5 +62,4 @@ class leapYear(object):
         >>> leapYear.months_in_cycle()
         235
         """
-        return sum([leapYear.months(year) for year in range(1,19+1)])
-
+        return sum([leapYear.months(year) for year in range(1, 19 + 1)])
