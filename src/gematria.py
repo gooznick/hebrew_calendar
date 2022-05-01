@@ -136,7 +136,7 @@ def num_to_year(num: int):
     return num_to_str(num) + word
 
 
-def str_to_num(word: str):
+def str_to_num(word: typing.Union[int, str]):
     """
     Convert a word to it's numeric value
 
@@ -151,6 +151,8 @@ def str_to_num(word: str):
         >>> str_to_num("גימטריה") == str_to_num("ערבה")
         True
     """
+    if type(word)==int:
+        return word
     return sum([val.get(c, 0) for c in word])
 
 

@@ -7,6 +7,7 @@ from enum import Enum
 from leap_years import leapYear
 import duration
 import gematria
+from hdate import HDate
 
 
 class YearType(Enum):
@@ -294,34 +295,27 @@ class Months:
         return sum(Months.months_length(year))
 
     @staticmethod
-    def weekday(
-        year: typing.Union[int, str],
-        month: typing.Union[int, str],
-        day_month: typing.Union[int, str],
-    ):
+    def weekday(date: HDate):
         """
         Find the weekday of a specific date
 
         Example:
-            >>> Months.weekday(5782, 9, 1)
+            >>> Months.weekday(HDate(1, 9 , 5782))
             1
-            >>> Months.weekday(5782, 1, 1)
+            >>> Months.weekday(HDate(1, 1, 5782))
             3
-            >>> Months.weekday(5786, 12, 13)
+            >>> Months.weekday(HDate(13, 12, 5786))
             4
-            >>> Months.weekday("ה-תשלז", "טבת", "ז")
+            >>> Months.weekday(HDate("ז", "טבת", "ה'תשלז"))
             3
         """
 
         # find day of rosh hashana
-        year_begin_weekday, _ = Months.year_begin_weekday(year)
+        year_begin_weekday, _ = Months.year_begin_weekday(date._year)
         # find days to the begining of the month
-        month = gematria.month_to_num(leapYear.is_leap(year), month)
-        days_from_year_begin = sum(Months.months_length(year)[: month - 1])
+        days_from_year_begin = sum(Months.months_length(date._year)[: date._month - 1])
         # days from month begin
-        if type(day_month) == str:
-            day_month = gematria.str_to_num(day_month)
-        days_in_month = day_month - 1
+        days_in_month = date._month_day - 1
         weekday = (
             year_begin_weekday + days_from_year_begin + days_in_month - 1
         ) % 7 + 1
