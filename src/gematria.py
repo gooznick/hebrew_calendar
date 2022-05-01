@@ -6,8 +6,12 @@ chars = "אבגדהוזחטיכלמנסעפצקרשת"
 val = {chars[v]: v + 1 for v in range(10)}
 val.update({chars[v]: (v - 8) * 10 for v in range(10, 19)})
 val.update({chars[v]: (v - 17) * 100 for v in range(19, 22)})
+
+# create num to val sorted dictionary
+value_to_letter = {v: l for l, v in val.items()}
 ends = ("מנצפכ", "םןץףך")
 val.update({e: val[v] for v, e in zip(ends[0], ends[1])})
+
 
 # prepare months lists
 def _remove_vowels(s):
@@ -92,6 +96,46 @@ def day_str_to_num(day: str):
     return DAYS[day]
 
 
+def num_to_str(num: int):
+    """
+    Convert a number to it's word value
+
+    Examples :
+        >>> num_to_str(320)
+        'כש'
+        >>> num_to_str(123)
+        'גכק'
+        >>> num_to_str(431)
+        'אלת'
+    """
+    word = ""
+    for v, l in reversed(value_to_letter.items()):
+        while num >= v:
+            num -= v
+            word = l + word
+    return word
+
+
+def num_to_year(num: int):
+    """
+    Convert a year to it's word value
+
+    Examples :
+        >>> num_to_year(5782)
+        "בפשת'ה"
+        >>> num_to_year(1000)
+        "'א"
+        >>> num_to_year(5900)
+        "קתת'ה"
+    """
+    word = ""
+    thousands = num // 1000
+    if thousands:
+        num -= thousands * 1000
+        word = "'" + num_to_str(thousands)
+    return num_to_str(num) + word
+
+
 def str_to_num(word: str):
     """
     Convert a word to it's numeric value
@@ -100,11 +144,11 @@ def str_to_num(word: str):
     output : numerical value
 
     Examples :
-        >>> year_str_to_num("שלום")
+        >>> str_to_num("שלום")
         376
-        >>> year_str_to_num("שלום רב שובך ציפורה")
+        >>> str_to_num("שלום רב שובך ציפורה")
         1297
-        >>> year_str_to_num("גימטריה") == year_str_to_num("ערבה")
+        >>> str_to_num("גימטריה") == str_to_num("ערבה")
         True
     """
     return sum([val.get(c, 0) for c in word])
