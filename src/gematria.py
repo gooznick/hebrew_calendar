@@ -151,7 +151,7 @@ def str_to_num(word: typing.Union[int, str]):
         >>> str_to_num("גימטריה") == str_to_num("ערבה")
         True
     """
-    if type(word)==int:
+    if type(word) == int:
         return word
     return sum([val.get(c, 0) for c in word])
 
