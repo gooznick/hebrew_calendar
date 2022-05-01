@@ -321,6 +321,42 @@ class Months:
         ) % 7 + 1
         return weekday
 
+    @staticmethod
+    def days_diff(begin: HDate, end: HDate):
+        """
+        Compute days diff between two dates
+
+        Examples:
+            >>> Months.days_diff(HDate(1, 9 , 5782), HDate(1, 9 , 5782))
+            0
+            >>> Months.days_diff(HDate(1, 9 , 5782), HDate(2, 9 , 5782))
+            1
+            >>> Months.days_diff(HDate(1, 9 , 5782), HDate(1, 10 , 5782))
+            30
+            >>> Months.days_diff(HDate(1, 10 , 5782), HDate(1, 11 , 5782))
+            29
+            >>> Months.days_diff(HDate(1, 10 , 5782), HDate(1, 10 , 5783))
+            385
+            >>> Months.days_diff(HDate(1, 10 , 5783), HDate(1, 10 , 5782))
+            0
+        """
+
+        days = 0
+        for year in range(begin._year, end._year):
+            days += Months.year_days(year)
+        begin_year_months_length = Months.months_length(begin._year)
+        days -= sum(begin_year_months_length[: begin._month - 1])
+        days -= begin._month_day
+
+        end_year_months_length = Months.months_length(end._year)
+        days += sum(end_year_months_length[: end._month - 1])
+        days += end._month_day
+
+        return max(0, days)
+
+
+Months.days_diff(HDate(1, 9, 5782), HDate(1, 9, 5782))
+
 
 def test_year_type():
     """
