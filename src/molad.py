@@ -77,7 +77,7 @@ class Months:
 
     @staticmethod
     def months_till(
-        year: typing.Union[int, str], month: typing.Union[int, str], begin=1
+        year: typing.Union[int, str], month: typing.Union[int, str] = 1, begin=1
     ):
         """
         Count months until specific date(year,month)

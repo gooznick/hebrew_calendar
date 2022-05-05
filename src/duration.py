@@ -1,4 +1,5 @@
 import math
+import gematria
 
 
 class duration(object):
@@ -15,9 +16,9 @@ class duration(object):
     HOURS = 24  # פרק ו הלכה ב
 
     def __init__(self, days=0, hours=0, parts=0):
-        self._days = days
-        self._hours = hours
-        self._parts = parts  # חלקים
+        self._days = gematria.str_to_num(days)
+        self._hours = gematria.str_to_num(hours)
+        self._parts = gematria.str_to_num(parts)  # חלקים
 
         self.__normalize()
 
@@ -105,6 +106,36 @@ class duration(object):
         res = duration(self._days * scalar, self._hours * scalar, self._parts * scalar)
         return res
 
+    def __rmul__(self, scalar):
+        """
+        >>> 12 * sinodal_month
+        duration(354, 8, 876)
+        """
+        res = duration(self._days, self._hours, self._parts) * scalar
+        return res
+
+    def __truediv__(self, scalar):
+        """
+        >>> duration(100, 24, 2) / 2
+        duration(50, 12, 1)
+        """
+        res = duration(self._days / scalar, self._hours / scalar, self._parts / scalar)
+        return res
+
+    def __eq__(self, other):
+        """
+        >>> duration.duration(1,2,3) == duration.duration(1,2,3)
+        True
+        """
+        return (
+            self._days == other._days
+            and self._hours == other._hours
+            and self._parts == other._parts
+        )
+
 
 sinodal_month = duration(29, 12, 793)  # פרק ו הלכה ד
 first_month = duration(2, 5, 204)  # פרק ו הלכה ח
+days_in_sun_year_shmuel = duration(365, 6)  # פרק ט הלכה א
+first_tkufa_diff = duration(7, 9, "תרמ'ב")  # פרק ט הלכה ג
+sun_moon_year_diff_in_cycle = duration(0, 1, 485)  # פרק ט הלכה ב
