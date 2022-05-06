@@ -266,11 +266,13 @@ class Months:
 
         Example:
             >>> Months.months_length(5782)
-            [30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30, 29, 30]
+            [30, 29, 30, 29, 30, 30, 29, 30, 29, 30, 29, 30, 29]
         """
-        months_num = leapYear.months(year)
+        is_leap = leapYear.is_leap(year)
         year_type = Months.year_type(year)
-        lengths = ([30, 29] * 7)[:months_num]
+        lengths = [30, 29] * 6
+        if is_leap:
+            lengths.insert(5, 30)
 
         # פרק ח הלכה ו
         if year_type == YearType.FULL:
@@ -301,7 +303,7 @@ class Months:
 
         Example:
             >>> Months.weekday(HDate(1, 9 , 5782))
-            1
+            2
             >>> Months.weekday(HDate(1, 1, 5782))
             3
             >>> Months.weekday(HDate(13, 12, 5786))
@@ -332,9 +334,9 @@ class Months:
             >>> Months.days_diff(HDate(1, 9 , 5782), HDate(2, 9 , 5782))
             1
             >>> Months.days_diff(HDate(1, 9 , 5782), HDate(1, 10 , 5782))
-            30
-            >>> Months.days_diff(HDate(1, 10 , 5782), HDate(1, 11 , 5782))
             29
+            >>> Months.days_diff(HDate(1, 10 , 5782), HDate(1, 11 , 5782))
+            30
             >>> Months.days_diff(HDate(1, 10 , 5782), HDate(1, 10 , 5783))
             385
             >>> Months.days_diff(HDate(1, 10 , 5783), HDate(1, 10 , 5782))
@@ -354,8 +356,47 @@ class Months:
 
         return max(0, days)
 
+    @staticmethod
+    def date_add_days(begin: HDate, days: int):
+        """
+        Add some days to a date to get a new date
 
-Months.days_diff(HDate(1, 9, 5782), HDate(1, 9, 5782))
+        Examples:
+            >>> Months.date_add_days(HDate(29, 8, 5782), 1)
+            HDate(30, 8, 5782)
+            >>> Months.date_add_days(HDate(29, 8, 5782), 2)
+            HDate(1, 9, 5782)
+            >>> Months.date_add_days(HDate(29, 8, 5782), 32)
+            HDate(2, 10, 5782)
+            >>> Months.date_add_days(HDate(29, 13, 5782), 1)
+            HDate(1, 1, 5783)
+            >>> Months.date_add_days(HDate(29, 13, 5782), 1000)
+            HDate(25, 9, 5785)
+        """
+        # Count the days in each month on the given date
+        months_length = Months.months_length(begin._year)
+        while True:
+            days_in_begin_month = min(
+                months_length[begin._month - 1] - begin._month_day, days
+            )
+            days -= days_in_begin_month
+            begin._month_day += days_in_begin_month
+
+            if not days:
+                break
+
+            begin._month_day = 1
+            begin._month += 1
+            days -= 1
+
+            if begin._month == (len(months_length) + 1):
+                begin._year += 1
+                begin._month = 1
+                months_length = Months.months_length(begin._year)
+        return begin
+
+
+Months.date_add_days(HDate(29, 13, 5782), 1)
 
 
 def test_year_type():
