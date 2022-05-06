@@ -341,6 +341,9 @@ class Months:
             385
             >>> Months.days_diff(HDate(1, 10 , 5783), HDate(1, 10 , 5782))
             0
+        
+        TODO:
+            Change to O(1)
         """
 
         days = 0
@@ -372,6 +375,9 @@ class Months:
             HDate(1, 1, 5783)
             >>> Months.date_add_days(HDate(29, 13, 5782), 1000)
             HDate(25, 9, 5785)
+        
+        TODO:
+            Change to O(1)
         """
         # Count the days in each month on the given date
         months_length = Months.months_length(begin._year)
