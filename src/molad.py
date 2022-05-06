@@ -324,7 +324,7 @@ class Months:
         return weekday
 
     @staticmethod
-    def days_diff(begin: HDate, end: HDate):
+    def days_diff_o_n_(begin: HDate, end: HDate):
         """
         Compute days diff between two dates
 
@@ -341,9 +341,7 @@ class Months:
             385
             >>> Months.days_diff(HDate(1, 10 , 5783), HDate(1, 10 , 5782))
             0
-        
-        TODO:
-            Change to O(1)
+
         """
 
         days = 0
@@ -358,6 +356,33 @@ class Months:
         days += end._month_day
 
         return max(0, days)
+
+    @staticmethod
+    def _days_to_date(date: HDate):
+        """
+        Count days between beginging (1,1,1) to a specific date
+        """
+        # count the days from the begining of the year
+        days_from_tishrei = Months.days_diff_o_n_(HDate(1, 1, date._year), date)
+
+        # count the duration between first molad and first of Tishrei
+        sinodal_months = Months.months_till(date._year, 1)
+        begining_time = duration.duration(
+            0, duration.first_month.hours, duration.first_month.parts
+        )
+
+        sinodal_months_duration = (
+            duration.sinodal_month * sinodal_months + begining_time
+        )
+        _, postpones = Months.year_begin_weekday(date._year)
+        return sum(postpones) + sinodal_months_duration._days + days_from_tishrei
+
+    @staticmethod
+    def days_diff(begin: HDate, end: HDate):
+        """
+        Count days between two dates
+        """
+        return Months._days_to_date(end) - Months._days_to_date(begin)
 
     @staticmethod
     def date_add_days(begin: HDate, days: int):
@@ -375,7 +400,7 @@ class Months:
             HDate(1, 1, 5783)
             >>> Months.date_add_days(HDate(29, 13, 5782), 1000)
             HDate(25, 9, 5785)
-        
+
         TODO:
             Change to O(1)
         """
@@ -400,27 +425,3 @@ class Months:
                 begin._month = 1
                 months_length = Months.months_length(begin._year)
         return begin
-
-
-Months.date_add_days(HDate(29, 13, 5782), 1)
-
-
-def test_year_type():
-    """
-    Test year type does not fail on
-    """
-    for year in range(5000, 6000):
-        Months.year_type(year)
-
-
-def test_months_in_years_o_1_():
-    """
-    Test computation on months_in_years_o(1) vs o(n) simpler computation
-    """
-    for begin in range(0, 100):
-        for end in range(0, 100):
-            assert Months._months_in_years_o_1_(  # pylint: disable=W0212
-                end, begin
-            ) == Months._months_in_years_o_n_(  # pylint: disable=W0212
-                end, begin
-            )
