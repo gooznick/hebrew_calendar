@@ -49,6 +49,15 @@ class duration(object):
         self._days = self._days % 7
         return self
 
+    def as_days_fraction(self):
+        """
+        Get the duration in days only
+
+        >>> duration(15,12).as_days_fraction()
+        15.5
+        """
+        return self._days + (self._hours + self.parts/self.PARTS) / self.HOURS
+
     @property
     def days(self):
         return self._days

@@ -40,3 +40,14 @@ class HDate:
         'HDate(5783, 1, 2)'
         """
         return f"HDate({self._month_day}, {self._month}, {self._year})"
+
+    def __eq__(self, other):
+        """
+        >>> HDate(1,2,3) == HDate(1,2,3)
+        True
+        """
+        return (
+            self._year == other._year
+            and self._month == other._month
+            and self._month_day == other._month_day
+        )

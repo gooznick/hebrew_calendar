@@ -3,6 +3,7 @@ New moon computations
 """
 import typing
 from enum import Enum
+import math
 
 from leap_years import leapYear
 import duration
@@ -329,17 +330,17 @@ class Months:
         Compute days diff between two dates
 
         Examples:
-            >>> Months.days_diff(HDate(1, 9 , 5782), HDate(1, 9 , 5782))
+            >>> Months.days_diff_o_n_(HDate(1, 9 , 5782), HDate(1, 9 , 5782))
             0
-            >>> Months.days_diff(HDate(1, 9 , 5782), HDate(2, 9 , 5782))
+            >>> Months.days_diff_o_n_(HDate(1, 9 , 5782), HDate(2, 9 , 5782))
             1
-            >>> Months.days_diff(HDate(1, 9 , 5782), HDate(1, 10 , 5782))
+            >>> Months.days_diff_o_n_(HDate(1, 9 , 5782), HDate(1, 10 , 5782))
             29
-            >>> Months.days_diff(HDate(1, 10 , 5782), HDate(1, 11 , 5782))
+            >>> Months.days_diff_o_n_(HDate(1, 10 , 5782), HDate(1, 11 , 5782))
             30
-            >>> Months.days_diff(HDate(1, 10 , 5782), HDate(1, 10 , 5783))
+            >>> Months.days_diff_o_n_(HDate(1, 10 , 5782), HDate(1, 10 , 5783))
             385
-            >>> Months.days_diff(HDate(1, 10 , 5783), HDate(1, 10 , 5782))
+            >>> Months.days_diff_o_n_(HDate(1, 10 , 5783), HDate(1, 10 , 5782))
             0
 
         """
@@ -378,31 +379,104 @@ class Months:
         return sum(postpones) + sinodal_months_duration._days + days_from_tishrei
 
     @staticmethod
+    def _diff_to_date(days_diff: int):
+        """
+        Compute the date with specific number of days for the begining (1,1,1)
+
+        Examples:
+            >>> Months._diff_to_date(1)
+            HDate(2, 1, 1)
+            >>> Months._diff_to_date(30) # length of first month
+            HDate(1, 2, 1)
+            >>> Months._diff_to_date(355) # length of first year
+            HDate(1, 1, 2)
+        """
+        # count the full sinodal months
+        sinodal_months = int(math.floor(days_diff / duration.sinodal_month.as_days_fraction()))
+
+        # count full cycles
+        full_cycles = sinodal_months // leapYear.months_in_cycle()
+
+        # find which year are we in
+        year = leapYear.CYCLE*full_cycles+1
+        sinodal_months -= full_cycles*leapYear.months_in_cycle()
+        while sinodal_months>leapYear.months(year):
+            sinodal_months-=leapYear.months(year)
+            year+=1
+        
+        # days till the begining of the year
+        days_until_year_begin = Months.days_diff(HDate(1,1,1),HDate(1,1,year))
+
+        return Months.date_add_days_o_n_(HDate(1,1,year), days_diff-days_until_year_begin)
+
+
+    @staticmethod
+    def date_add_days(date: HDate, days_add: int):
+        """
+        Compute the date with specific number of days after given date
+
+        Examples:
+            >>> Months.date_add_days_o_n_(HDate(29, 8, 5782), 1)
+            HDate(30, 8, 5782)
+            >>> Months.date_add_days_o_n_(HDate(29, 8, 5782), 2)
+            HDate(1, 9, 5782)
+            >>> Months.date_add_days_o_n_(HDate(29, 8, 5782), 32)
+            HDate(2, 10, 5782)
+            >>> Months.date_add_days_o_n_(HDate(29, 13, 5782), 1)
+            HDate(1, 1, 5783)
+            >>> Months.date_add_days_o_n_(HDate(29, 13, 5782), 1000)
+            HDate(25, 9, 5785)
+            >>> Months.date_add_days(HDate(4,5,5700), 600)
+            HDate(25, 9, 5785)
+
+        """
+        # Count days from the beginging to the date
+        days_from_begining_to_date = Months.days_diff(HDate(1,1,1), date)
+
+        # Add the given days
+        days_from_begining = days_from_begining_to_date + days_add
+
+        # compute date by days from begining
+        return Months._diff_to_date(days_from_begining)
+
+    @staticmethod
     def days_diff(begin: HDate, end: HDate):
         """
         Count days between two dates
+
+        Examples:
+            >>> Months.days_diff_o_n_(HDate(1, 9 , 5782), HDate(1, 9 , 5782))
+            0
+            >>> Months.days_diff_o_n_(HDate(1, 9 , 5782), HDate(2, 9 , 5782))
+            1
+            >>> Months.days_diff_o_n_(HDate(1, 9 , 5782), HDate(1, 10 , 5782))
+            29
+            >>> Months.days_diff_o_n_(HDate(1, 10 , 5782), HDate(1, 11 , 5782))
+            30
+            >>> Months.days_diff_o_n_(HDate(1, 10 , 5782), HDate(1, 10 , 5783))
+            385
+            >>> Months.days_diff_o_n_(HDate(1, 10 , 5783), HDate(1, 10 , 5782))
+            0
         """
         return Months._days_to_date(end) - Months._days_to_date(begin)
 
     @staticmethod
-    def date_add_days(begin: HDate, days: int):
+    def date_add_days_o_n_(begin: HDate, days: int):
         """
         Add some days to a date to get a new date
 
         Examples:
-            >>> Months.date_add_days(HDate(29, 8, 5782), 1)
+            >>> Months.date_add_days_o_n_(HDate(29, 8, 5782), 1)
             HDate(30, 8, 5782)
-            >>> Months.date_add_days(HDate(29, 8, 5782), 2)
+            >>> Months.date_add_days_o_n_(HDate(29, 8, 5782), 2)
             HDate(1, 9, 5782)
-            >>> Months.date_add_days(HDate(29, 8, 5782), 32)
+            >>> Months.date_add_days_o_n_(HDate(29, 8, 5782), 32)
             HDate(2, 10, 5782)
-            >>> Months.date_add_days(HDate(29, 13, 5782), 1)
+            >>> Months.date_add_days_o_n_(HDate(29, 13, 5782), 1)
             HDate(1, 1, 5783)
-            >>> Months.date_add_days(HDate(29, 13, 5782), 1000)
+            >>> Months.date_add_days_o_n_(HDate(29, 13, 5782), 1000)
             HDate(25, 9, 5785)
 
-        TODO:
-            Change to O(1)
         """
         # Count the days in each month on the given date
         months_length = Months.months_length(begin._year)
@@ -425,3 +499,8 @@ class Months:
                 begin._month = 1
                 months_length = Months.months_length(begin._year)
         return begin
+
+
+d1 = HDate(2, 9, 5701)
+a = 500
+d2 = Months.date_add_days(d1, a)

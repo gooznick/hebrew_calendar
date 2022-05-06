@@ -6,6 +6,11 @@ def test_days_diff():
         assert(Months.days_diff_o_n_(HDate(1,1,1), HDate(1, 1 , y)) ==
             Months.days_diff(HDate(1,1,1), HDate(1, 1 , y)))
 
+def test_date_add_days():
+    for d in range(500,800,3):
+        date = HDate(4,5,5700)
+        assert(Months.date_add_days(date, d) == Months.date_add_days_o_n_(date, d))
+
 
 def test_year_type():
     """
