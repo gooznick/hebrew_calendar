@@ -56,7 +56,7 @@ class duration(object):
         >>> duration(15,12).as_days_fraction()
         15.5
         """
-        return self._days + (self._hours + self.parts/self.PARTS) / self.HOURS
+        return self._days + (self._hours + self.parts / self.PARTS) / self.HOURS
 
     @property
     def days(self):
@@ -80,6 +80,10 @@ class duration(object):
     @property
     def parts(self):
         return self._parts
+
+    @property
+    def minutes(self):
+        return self._parts / self.PARTS * 60
 
     @parts.setter
     def parts(self, p):
@@ -145,6 +149,7 @@ class duration(object):
 
 sinodal_month = duration(29, 12, 793)  # פרק ו הלכה ד
 first_month = duration(2, 5, 204)  # פרק ו הלכה ח
+begining_time = duration(0, first_month.hours, first_month.parts)
 days_in_sun_year_shmuel = duration(365, 6)  # פרק ט הלכה א
 first_tkufa_diff = duration(7, 9, "תרמ'ב")  # פרק ט הלכה ג
 sun_moon_year_diff_in_cycle = duration(0, 1, 485)  # פרק ט הלכה ב

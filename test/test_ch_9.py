@@ -1,7 +1,8 @@
-
-
 import duration
 import leap_years
+import molad
+import gematria
+
 
 def test_sun_year_diff():
     """
@@ -12,7 +13,10 @@ def test_sun_year_diff():
     sun_days_in_cycle = duration.days_in_sun_year_shmuel * leap_years.leapYear.CYCLE
     moon_days_in_cycle = duration.sinodal_month * leap_years.leapYear.months_in_cycle()
     sun_moon_year_diff_in_cycle = sun_days_in_cycle - moon_days_in_cycle
-    assert sun_moon_year_diff_in_cycle == duration.sun_moon_year_diff_in_cycle # פרק ט הלכה ב
+    assert (
+        sun_moon_year_diff_in_cycle == duration.sun_moon_year_diff_in_cycle
+    )  # פרק ט הלכה ב
+
 
 def test_tkufa():
     """
@@ -21,25 +25,31 @@ def test_tkufa():
     Source : פרק ט הלכה ב
     """
     tkufa_duration = duration.days_in_sun_year_shmuel / 4
-    assert tkufa_duration == duration.duration(91, 7.5) # פרק ט הלכה ג
+    assert tkufa_duration == duration.duration(91, 7.5)  # פרק ט הלכה ג
 
-import gematria
-import molad
 
-def tkufa_for_year(year):
+def test_tkufa_time():
     """
-    Calculate duration of all 4 tkufut for a year
+    Test time of the tkufos
 
-    Source : 
+    Source : פרק ט הלכה ה
     """
+    for year in range(5700, 5800):
+        tkufot = molad.Months.tkufot(year)
+        nissan = gematria.tkufa_to_num("ניסן")
+        assert tkufot[nissan][2] == 0
+        assert tkufot[nissan][1] % 6 == 0
 
-    # calculate the Tkufa of nissan
-    year = gematria.year_to_num(year)
-    months = molad.Months.months_till(year)
-    diff = (year-1) * duration.days_in_sun_year_shmuel - months * duration.sinodal_month - duration.first_tkufa_diff
-    tkufa_of_nissan = molad.Months.molad(year, "ניסן") + diff 
-    import pdb;pdb.set_trace()
+        tamuz = gematria.tkufa_to_num("תמוז")
+        assert tkufot[tamuz][1:] in [(7, 30.0), (1, 30.0), (7 + 12, 30.0), (1 + 12, 30.0)]
 
+        tishrey = gematria.tkufa_to_num("תשרי")
+        assert tkufot[tishrey][1:] in [(9, 0.0), (3, 0.0), (9 + 12, 0.0), (3 + 12, 0.0)]
 
-def test_tkufa_for_year():
-    tkufa_for_year(5781)
+        tevet = gematria.tkufa_to_num("טבת")
+        assert tkufot[tevet][1:] in [
+            (10, 30.0),
+            (4, 30.0),
+            (10 + 12, 30.0),
+            (4 + 12, 30.0),
+        ]

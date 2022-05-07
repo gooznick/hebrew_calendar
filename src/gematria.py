@@ -57,6 +57,36 @@ DAYS_NAMES = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", 
 DAYS.update({name: ind + 1 for ind, name in enumerate(DAYS_NAMES)})
 
 
+TKUFOT = [
+    "תשרי",
+    "טבת",
+    "ניסן",
+    "תמוז",
+]
+
+
+def num_to_tkufa(tkufa_num: int):
+    """
+    Convert a number to tkufa name (0 based)
+
+    Examples :
+        >>> num_to_tkufa(0)
+        'תשרי'
+    """
+    return TKUFOT[tkufa_num]
+
+
+def tkufa_to_num(tkufa_str: str):
+    """
+    Convert tkufa name to a number (0 based)
+
+    Examples :
+        >>> tkufa_to_num('תשרי')
+        0
+    """
+    return TKUFOT.index(tkufa_str)
+
+
 def num_to_day(day: int):
     """
     Convert a number to day name

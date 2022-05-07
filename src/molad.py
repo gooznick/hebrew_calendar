@@ -101,17 +101,24 @@ class Months:
 
     @staticmethod
     def molad(year: typing.Union[int, str], month: typing.Union[int, str]):
+
+        months_num = Months.months_till(year, month)
+        molad = duration.sinodal_month * months_num
+        return molad
+
+    @staticmethod
+    def molad_day(year: typing.Union[int, str], month: typing.Union[int, str]):
         """
-        Calculate he mean new moon of a specific month
+        Calculate the mean new moon of a specific month
 
         Examples:
-            >>> Months.molad(1, "תשרי")
+            >>> Months.molad_day(1, "תשרי")
             duration(2, 5, 204)
-            >>> Months.molad(5782, "ניסן")
+            >>> Months.molad_day(5782, "ניסן")
             duration(6, 22, 648)
-            >>> Months.molad("ה-תשפב", "ניסן")
+            >>> Months.molad_day("ה-תשפב", "ניסן")
             duration(6, 22, 648)
-            >>> Months.molad(5782, 1)
+            >>> Months.molad_day(5782, 1)
             duration(3, 5, 497)
 
         Can be verified vs https://he-date.info/moladcalculateyear.html
@@ -235,7 +242,7 @@ class Months:
         year = gematria.year_to_num(year)
         is_leap = leapYear.is_leap(year)
         is_former_leap = leapYear.is_leap(year - 1)
-        molad = Months.molad(year, 1)
+        molad = Months.molad_day(year, 1)
         return Months.apply_postpone_rules(molad, is_former_leap, is_leap)
 
     @staticmethod
@@ -368,12 +375,9 @@ class Months:
 
         # count the duration between first molad and first of Tishrei
         sinodal_months = Months.months_till(date._year, 1)
-        begining_time = duration.duration(
-            0, duration.first_month.hours, duration.first_month.parts
-        )
 
         sinodal_months_duration = (
-            duration.sinodal_month * sinodal_months + begining_time
+            duration.sinodal_month * sinodal_months + duration.begining_time
         )
         _, postpones = Months.year_begin_weekday(date._year)
         return sum(postpones) + sinodal_months_duration._days + days_from_tishrei
@@ -392,23 +396,26 @@ class Months:
             HDate(1, 1, 2)
         """
         # count the full sinodal months
-        sinodal_months = int(math.floor(days_diff / duration.sinodal_month.as_days_fraction()))
+        sinodal_months = int(
+            math.floor(days_diff / duration.sinodal_month.as_days_fraction())
+        )
 
         # count full cycles
         full_cycles = sinodal_months // leapYear.months_in_cycle()
 
         # find which year are we in
-        year = leapYear.CYCLE*full_cycles+1
-        sinodal_months -= full_cycles*leapYear.months_in_cycle()
-        while sinodal_months>leapYear.months(year):
-            sinodal_months-=leapYear.months(year)
-            year+=1
-        
+        year = leapYear.CYCLE * full_cycles + 1
+        sinodal_months -= full_cycles * leapYear.months_in_cycle()
+        while sinodal_months > leapYear.months(year):
+            sinodal_months -= leapYear.months(year)
+            year += 1
+
         # days till the begining of the year
-        days_until_year_begin = Months.days_diff(HDate(1,1,1),HDate(1,1,year))
+        days_until_year_begin = Months.days_diff(HDate(1, 1, 1), HDate(1, 1, year))
 
-        return Months.date_add_days_o_n_(HDate(1,1,year), days_diff-days_until_year_begin)
-
+        return Months.date_add_days_o_n_(
+            HDate(1, 1, year), days_diff - days_until_year_begin
+        )
 
     @staticmethod
     def date_add_days(date: HDate, days_add: int):
@@ -427,11 +434,11 @@ class Months:
             >>> Months.date_add_days_o_n_(HDate(29, 13, 5782), 1000)
             HDate(25, 9, 5785)
             >>> Months.date_add_days(HDate(4,5,5700), 600)
-            HDate(25, 9, 5785)
+            HDate(13, 12, 5701)
 
         """
         # Count days from the beginging to the date
-        days_from_begining_to_date = Months.days_diff(HDate(1,1,1), date)
+        days_from_begining_to_date = Months.days_diff(HDate(1, 1, 1), date)
 
         # Add the given days
         days_from_begining = days_from_begining_to_date + days_add
@@ -500,7 +507,41 @@ class Months:
                 months_length = Months.months_length(begin._year)
         return begin
 
+    def tkufot(year: typing.Union[int, str]):
+        """
+        Find all 4 tkufot of the year : תשרי, טבת, ניסן, תמוז
 
-d1 = HDate(2, 9, 5701)
-a = 500
-d2 = Months.date_add_days(d1, a)
+        Example :
+            >>> Months.tkufot(5782)
+            [(HDate(1, 2, 5782), 9, 0.0), (HDate(4, 5, 5782), 16, 30.0), (HDate(7, 8, 5782), 0, 0.0), (HDate(9, 11, 5782), 7, 30.0)]
+
+        Note:
+            Example verified with "Itim Lebina" calendar
+            Not including light saving clock calculations
+
+        """
+        year = gematria.year_to_num(year)
+
+        nissan_first_molad = Months.molad(1, "ניסן")
+        nissan_first_tkufa = nissan_first_molad - duration.first_tkufa_diff
+
+        def days_to_tkufa(duration_from_beginning):
+            date = Months.date_add_days(HDate(1, 1, 1), duration_from_beginning.days)
+            return (date, d.hours, d.minutes)
+
+        # tkufa of nissan
+        nissans_tkufa_from_begining = (
+            duration.days_in_sun_year_shmuel * (year - 1) + nissan_first_tkufa
+        )
+        nissans_tkufa_from_begining = duration.duration(
+            nissans_tkufa_from_begining.days, nissans_tkufa_from_begining.hours
+        )
+        tishrey_tkufa_from_begining = (
+            nissans_tkufa_from_begining - duration.days_in_sun_year_shmuel / 4 * 3
+        )
+        d = tishrey_tkufa_from_begining
+        tkufot_list = []
+        for _ in range(4):
+            d = d + duration.days_in_sun_year_shmuel / 4
+            tkufot_list.append(days_to_tkufa(d))
+        return tkufot_list
