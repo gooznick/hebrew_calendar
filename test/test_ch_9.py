@@ -35,7 +35,7 @@ def test_tkufa_time():
     Source : פרק ט הלכה ה
     """
     for year in range(5700, 5800):
-        tkufot = molad.Months.tkufot(year)
+        tkufot = molad.Months.tkufot_shmuel(year)
         nissan = gematria.tkufa_to_num("ניסן")
         assert tkufot[nissan][2] == 0
         assert tkufot[nissan][1] % 6 == 0

@@ -37,7 +37,7 @@ class HDate:
     def __repr__(self):
         """
         >>> repr(HDate(2,1,5783))
-        'HDate(5783, 1, 2)'
+        'HDate(2, 1, 5783)'
         """
         return f"HDate({self._month_day}, {self._month}, {self._year})"
 

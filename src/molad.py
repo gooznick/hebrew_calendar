@@ -507,12 +507,13 @@ class Months:
                 months_length = Months.months_length(begin._year)
         return begin
 
-    def tkufot(year: typing.Union[int, str]):
+    @staticmethod
+    def tkufot_shmuel(year: typing.Union[int, str]):
         """
         Find all 4 tkufot of the year : תשרי, טבת, ניסן, תמוז
 
         Example :
-            >>> Months.tkufot(5782)
+            >>> Months.tkufot_shmuel(5782)
             [(HDate(1, 2, 5782), 9, 0.0), (HDate(4, 5, 5782), 16, 30.0), (HDate(7, 8, 5782), 0, 0.0), (HDate(9, 11, 5782), 7, 30.0)]
 
         Note:
@@ -520,28 +521,65 @@ class Months:
             Not including light saving clock calculations
 
         """
+        return Months._tkufot(
+            year,
+            duration.first_tkufa_diff_shmuel,
+            duration.days_in_sun_year_shmuel,
+            hours_only=True,
+        )
+
+    @staticmethod
+    def tkufot_rav_ada(year: typing.Union[int, str]):
+        """
+        Find all 4 tkufot of the year : תשרי, טבת, ניסן, תמוז
+
+        Example :
+            >>> Months.tkufot_rav_ada(20)
+            []
+            >>> Months.tkufot_rav_ada(1)
+            []
+
+            >>> Months.tkufot_rav_ada(5781)
+            []
+
+        Note:
+            Example verified with "Itim Lebina" calendar
+            Not including light saving clock calculations
+
+        """
+        return Months._tkufot(
+            year,
+            duration.first_tkufa_diff_rav_ada,
+            duration.days_in_sun_year_rav_ada,
+            hours_only=False,
+        )
+
+    @staticmethod
+    def _tkufot(year: typing.Union[int, str], first_tkufa, sun_year, hours_only):
+        """
+        Find all 4 tkufot of the year : תשרי, טבת, ניסן, תמוז
+        Internal method to find both shmuel and rav ada's tkufa
+
+        """
         year = gematria.year_to_num(year)
 
         nissan_first_molad = Months.molad(1, "ניסן")
-        nissan_first_tkufa = nissan_first_molad - duration.first_tkufa_diff
+        nissan_first_tkufa = nissan_first_molad - first_tkufa
 
         def days_to_tkufa(duration_from_beginning):
             date = Months.date_add_days(HDate(1, 1, 1), duration_from_beginning.days)
             return (date, d.hours, d.minutes)
 
         # tkufa of nissan
-        nissans_tkufa_from_begining = (
-            duration.days_in_sun_year_shmuel * (year - 1) + nissan_first_tkufa
-        )
-        nissans_tkufa_from_begining = duration.duration(
-            nissans_tkufa_from_begining.days, nissans_tkufa_from_begining.hours
-        )
-        tishrey_tkufa_from_begining = (
-            nissans_tkufa_from_begining - duration.days_in_sun_year_shmuel / 4 * 3
-        )
+        nissans_tkufa_from_begining = sun_year * (year - 1) + nissan_first_tkufa
+        if hours_only:
+            nissans_tkufa_from_begining = duration.duration(
+                nissans_tkufa_from_begining.days, nissans_tkufa_from_begining.hours
+            )
+        tishrey_tkufa_from_begining = nissans_tkufa_from_begining - sun_year / 4 * 3
         d = tishrey_tkufa_from_begining
         tkufot_list = []
         for _ in range(4):
-            d = d + duration.days_in_sun_year_shmuel / 4
+            d = d + sun_year / 4
             tkufot_list.append(days_to_tkufa(d))
         return tkufot_list
