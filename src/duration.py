@@ -202,7 +202,6 @@ begining_time = duration(0, first_month.hours, first_month.parts)
 days_in_sun_year_shmuel = duration(365, 6)  # פרק ט הלכה א
 days_in_sun_year_rav_ada = duration(365, 5, "תתקצז", "מח")  # פרק י הלכה א
 first_tkufa_diff_rav_ada = duration(0, 9, "תרמ'ב")  # פרק י הלכה ג
-
-
 first_tkufa_diff_shmuel = duration(7, 9, "תרמ'ב")  # פרק ט הלכה ג
+
 sun_moon_year_diff_in_cycle = duration(0, 1, 485)  # פרק ט הלכה ב

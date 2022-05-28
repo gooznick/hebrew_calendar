@@ -539,7 +539,7 @@ class Months:
             >>> Months.tkufot_rav_ada(1)
             []
 
-            >>> Months.tkufot_rav_ada(5781)
+            >>> Months.tkufot_rav_ada(5782)
             []
 
         Note:
@@ -576,10 +576,11 @@ class Months:
             nissans_tkufa_from_begining = duration.duration(
                 nissans_tkufa_from_begining.days, nissans_tkufa_from_begining.hours
             )
-        tishrey_tkufa_from_begining = nissans_tkufa_from_begining - sun_year / 4 * 3
+        tkufa_duration = sun_year / 4
+        tishrey_tkufa_from_begining = nissans_tkufa_from_begining - tkufa_duration * 3
         d = tishrey_tkufa_from_begining
         tkufot_list = []
         for _ in range(4):
-            d = d + sun_year / 4
+            d = d + tkufa_duration
             tkufot_list.append(days_to_tkufa(d))
         return tkufot_list
