@@ -64,6 +64,31 @@ TKUFOT = [
     "תמוז",
 ]
 
+MAZALOT = [
+    "טלה",
+    "שור",
+    "תאומים",
+    "סרטן",
+    "אריה",
+    "בתולה",
+    "מאזניים",
+    "עקרב",
+    "קשת",
+    "גדי",
+    "דלי",
+    "דגים",
+]
+
+def degree_to_mazal(degree_num: int):
+    """
+    Convert a degree to mazal name # פרק יא הלכה ט
+
+    Examples :
+        >>> degree_to_mazal(70)
+        'תאומים'
+    """
+    return MAZALOT[(degree_num//30)%12]
+
 
 def num_to_tkufa(tkufa_num: int):
     """
