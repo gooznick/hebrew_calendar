@@ -45,6 +45,31 @@ def test_halacha_2():
     assert (gematria.degree_to_mazal(location.degrees) == "סרטן")
 
 
+table = [
+    #   Date , days since hs_beginning, location, aphelion
+    (HDate("יג", "כסלו", "ה-תשנג"), 71, 256.668, 102.832),
+    (HDate("טו", "ניסן", "ה-תשנג"), 190, 13.960, 102.837),
+    (HDate("יא", "סיון", "ה-תשנד"), 600, 58.076,
+     102.854),  # it's י in the original book
+    (HDate("ה", "חשון", "ה-תשנג"), 34, 220.199,
+     102.831),  # it's ד in the original book
+]
+
+
+@pytest.mark.parametrize("date, since_beg, location, aphelion", table)
+def test_hazon_shamaim(date, since_beg, location, aphelion):
+    assert (since_beg == molad.Months.days_diff(
+        sun.hs_location_coefs["t0"], date))
+    computed_location = sun.Sun._compute_location_on_day(
+        date, sun.hs_location_coefs)
+    assert (location == float("%.3f" %
+            computed_location.as_degrees_fraction()))
+    computed_aphelion = sun.Sun._compute_location_on_day(
+        date, sun.hs_aphelion_coefs)
+    assert (aphelion == float("%.3f" %
+            computed_aphelion.as_degrees_fraction()))
+
+
 @pytest.mark.xfail
 def test_halacha_1_year():
     assert ((sun.location_coefs["v"] * 354).remove_thirds().remove_circles()

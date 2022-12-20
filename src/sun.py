@@ -28,7 +28,7 @@ class Sun:
         It may be the location in the beginning of the night, 
         or an hour before sunset, or an hour after sunset # פרק יב הלכה ב
         """
-        return Sun.__compute_location_on_day(date, location_coefs)
+        return Sun._compute_location_on_day(date, location_coefs)
 
     @staticmethod
     def aphelion(date: HDate):
@@ -37,10 +37,10 @@ class Sun:
         It may be the location in the beginning of the night, 
         or an hour before sunset, or an hour after sunset # פרק יב הלכה ב
         """
-        return Sun.__compute_location_on_day(date, aphelion_coefs)
+        return Sun._compute_location_on_day(date, aphelion_coefs)
 
     @staticmethod
-    def __compute_location_on_day(date: HDate, coefficients):
+    def _compute_location_on_day(date: HDate, coefficients):
         days_since_t0 = molad.Months.days_diff(coefficients["t0"], date)
         location = coefficients["x0"] + coefficients["v"]*days_since_t0
         return location.remove_circles()
@@ -61,3 +61,10 @@ location_coefs = {"t0": RambamBeginningDay, "x0": angle(7, 3, "לב"), "v": angl
                                                                                 "כח", "כ") / 10000}  # פרק יב הלכה א
 aphelion_coefs = {"t0": RambamBeginningDay, "x0": angle(
     "כו", "מה", 8) + angle(gematria.mazal_to_degree("תאומים")), "v": angle(0, 0, 1, "ל") / 10}  # פרק יב הלכה א
+
+HazonShamaimBeginningDay = HDate("א", "תשרי", "ה-תשנג")
+
+hs_location_coefs = {"t0": HazonShamaimBeginningDay, "x0": angle(
+    186.68737), "v": location_coefs["v"]}  # חזון שמים עמ' מז
+hs_aphelion_coefs = {"t0": HazonShamaimBeginningDay, "x0": angle(
+    102, 49, 44.76), "v": aphelion_coefs["v"]}  # חזזון שמים עמ' מה הערה 6
