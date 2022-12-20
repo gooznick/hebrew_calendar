@@ -79,6 +79,7 @@ MAZALOT = [
     "דגים",
 ]
 
+
 def degree_to_mazal(degree_num: int):
     """
     Convert a degree to mazal name # פרק יא הלכה ט
@@ -87,7 +88,21 @@ def degree_to_mazal(degree_num: int):
         >>> degree_to_mazal(70)
         'תאומים'
     """
-    return MAZALOT[(degree_num//30)%12]
+    return MAZALOT[(degree_num//30) % 12]
+
+
+def mazal_to_degree(mazal: str):
+    """
+    Convert a mazal name to degrees
+
+    Examples :
+        >>> mazal_to_degree("תאומים")
+        60
+    """
+    index = MAZALOT.index(mazal)
+    if index == -1:
+        return None
+    return index*30
 
 
 def num_to_tkufa(tkufa_num: int):

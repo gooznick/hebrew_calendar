@@ -22,8 +22,10 @@ class YearType(Enum):
 
 
 YEAR_TYPES = {
-    False: {2: YearType.PARTIAL, 3: YearType.ORDINAL, 4: YearType.FULL},  # פרק ח הלכה ז
-    True: {4: YearType.PARTIAL, 5: YearType.ORDINAL, 6: YearType.FULL},  # פרק ח הלכה ח
+    # פרק ח הלכה ז
+    False: {2: YearType.PARTIAL, 3: YearType.ORDINAL, 4: YearType.FULL},
+    # פרק ח הלכה ח
+    True: {4: YearType.PARTIAL, 5: YearType.ORDINAL, 6: YearType.FULL},
 }
 
 
@@ -70,7 +72,8 @@ class Months:
         last_cycle_begin = end - end_cycle + 1
         for year in range(begin, first_cycle_end):
             months += leapYear.months(year)
-        cycles = (last_cycle_begin - first_cycle_end) // 19  # may be negative. it's o.k
+        # may be negative. it's o.k
+        cycles = (last_cycle_begin - first_cycle_end) // 19
         months += cycles * leapYear.months_in_cycle()
         for year in range(last_cycle_begin, end):
             months += leapYear.months(year)
@@ -96,7 +99,8 @@ class Months:
         year = gematria.year_to_num(year)
         months_in_years = Months._months_in_years_o_1_(year, begin)
         return (
-            months_in_years + gematria.month_to_num(leapYear.is_leap(year), month) - 1
+            months_in_years +
+            gematria.month_to_num(leapYear.is_leap(year), month) - 1
         )
 
     @staticmethod
@@ -211,7 +215,8 @@ class Months:
         activated = [False] * 4
         months_head, activated[1] = Months.potpone_rule_2(molad_tishrei)
         if not any(activated):
-            months_head, activated[2] = Months.potpone_rule_3(molad_tishrei, is_leap)
+            months_head, activated[2] = Months.potpone_rule_3(
+                molad_tishrei, is_leap)
         if not any(activated):
             months_head, activated[3] = Months.potpone_rule_4(
                 molad_tishrei, is_former_leap
@@ -323,7 +328,8 @@ class Months:
         # find day of rosh hashana
         year_begin_weekday, _ = Months.year_begin_weekday(date._year)
         # find days to the begining of the month
-        days_from_year_begin = sum(Months.months_length(date._year)[: date._month - 1])
+        days_from_year_begin = sum(
+            Months.months_length(date._year)[: date._month - 1])
         # days from month begin
         days_in_month = date._month_day - 1
         weekday = (
@@ -371,7 +377,8 @@ class Months:
         Count days between beginging (1,1,1) to a specific date
         """
         # count the days from the begining of the year
-        days_from_tishrei = Months.days_diff_o_n_(HDate(1, 1, date._year), date)
+        days_from_tishrei = Months.days_diff_o_n_(
+            HDate(1, 1, date._year), date)
 
         # count the duration between first molad and first of Tishrei
         sinodal_months = Months.months_till(date._year, 1)
@@ -411,7 +418,8 @@ class Months:
             year += 1
 
         # days till the begining of the year
-        days_until_year_begin = Months.days_diff(HDate(1, 1, 1), HDate(1, 1, year))
+        days_until_year_begin = Months.days_diff(
+            HDate(1, 1, 1), HDate(1, 1, year))
 
         return Months.date_add_days_o_n_(
             HDate(1, 1, year), days_diff - days_until_year_begin
@@ -533,14 +541,6 @@ class Months:
         """
         Find all 4 tkufot of the year : תשרי, טבת, ניסן, תמוז
 
-        Example :
-            >>> Months.tkufot_rav_ada(20)
-            []
-            >>> Months.tkufot_rav_ada(1)
-            []
-
-            >>> Months.tkufot_rav_ada(5782)
-            []
 
         Note:
             Example verified with "Itim Lebina" calendar
@@ -567,11 +567,13 @@ class Months:
         nissan_first_tkufa = nissan_first_molad - first_tkufa
 
         def days_to_tkufa(duration_from_beginning):
-            date = Months.date_add_days(HDate(1, 1, 1), duration_from_beginning.days)
+            date = Months.date_add_days(
+                HDate(1, 1, 1), duration_from_beginning.days)
             return (date, d.hours, d.minutes)
 
         # tkufa of nissan
-        nissans_tkufa_from_begining = sun_year * (year - 1) + nissan_first_tkufa
+        nissans_tkufa_from_begining = sun_year * \
+            (year - 1) + nissan_first_tkufa
         if hours_only:
             nissans_tkufa_from_begining = duration.duration(
                 nissans_tkufa_from_begining.days, nissans_tkufa_from_begining.hours

@@ -6,7 +6,7 @@ class angle(object):
     Class that represent an angle. פרק יא הלכה ז
 
     >>> angle(40, 8, 30)
-    angle(40, 8, 30, 0)
+    angle(40, 8, 30, 0.0)
     """
 
     PARTS = 60  # פרק יא הלכה ז
@@ -16,14 +16,13 @@ class angle(object):
     def __init__(self, degrees=0, parts=0, seconds=0, thirds=0):
         self._degrees = gematria.str_to_num(degrees)
         self._parts = gematria.str_to_num(parts)  # חלקים
-        self._seconds = gematria.str_to_num(seconds) # שניות
-        self._thirds = gematria.str_to_num(thirds) # שלשיות
+        self._seconds = gematria.str_to_num(seconds)  # שניות
+        self._thirds = gematria.str_to_num(thirds)  # שלשיות
 
         self.__normalize()
 
     def __str__(self):
         return f"שלישיות {self._thirds} שניות {self._seconds} חלקים {self._parts} מעלות {self._degrees}"
-
 
     def __repr__(self):
         return (
@@ -35,23 +34,35 @@ class angle(object):
         Convert to int within the correct range of each member
         """
         thirds = (
-            ((self._degrees * self.PARTS +self._parts) * self.PARTS + self._seconds) * self.PARTS +
+            ((self._degrees * self.PARTS + self._parts) * self.PARTS + self._seconds) * self.PARTS +
             self._thirds
-            )
-        thirds = thirds%self.THIRDS_IN_CIRCLE
+        )
+        if thirds < 0:
+            thirds += self.THIRDS_IN_CIRCLE
         self._seconds = int(thirds / self.PARTS)
-        self._thirds = int(thirds - self._seconds * self.PARTS)
+        self._thirds = thirds - self._seconds * self.PARTS
 
         self._parts = int(self._seconds / self.PARTS)
         self._seconds = int(self._seconds - self._parts * self.PARTS)
 
         self._degrees = int(self._parts / self.PARTS)
         self._parts = int(self._parts - self._degrees * self.PARTS)
+        self._thirds = float(self._thirds)
 
+    def remove_circles(self):
         self._degrees %= self.DEGREES
+        return self
 
     def to_degree_in_mazal(self):
-        self._degrees = self._degrees%30
+        self._degrees = self._degrees % 30
+
+    def remove_thirds(self):
+        self._thirds = 0
+        return self
+
+    def round_thirds(self):
+        self._thirds = round(self._thirds)
+        return self
 
     def as_degrees_fraction(self):
         """
@@ -87,7 +98,7 @@ class angle(object):
     def __add__(self, d):
         """
         >>> angle(1,2,3) + angle(7,1,2)
-        angle(8, 3, 5, 0)
+        angle(8, 3, 5, 0.0)
         """
         res = angle(
             self._degrees + d._degrees,
@@ -100,7 +111,7 @@ class angle(object):
     def __sub__(self, d):
         """
         >>> angle(37,4,3) - angle(7,1,2)
-        angle(30, 3, 1, 0)
+        angle(30, 3, 1, 0.0)
         """
         res = angle(
             self._degrees - d._degrees,
@@ -113,7 +124,7 @@ class angle(object):
     def __mul__(self, scalar):
         """
         >>> angle(7,1,2) * 10
-        angle(70, 10, 20, 0)
+        angle(70, 10, 20, 0.0)
         """
         res = angle(
             self._degrees * scalar,
@@ -126,15 +137,16 @@ class angle(object):
     def __rmul__(self, scalar):
         """
         >>> 10 * angle(7,1,2)
-        angle(70, 10, 20, 0)
+        angle(70, 10, 20, 0.0)
         """
-        res = angle(self._degrees, self._parts, self._seconds, self._thirds) * scalar
+        res = angle(self._degrees, self._parts,
+                    self._seconds, self._thirds) * scalar
         return res
 
     def __truediv__(self, scalar):
         """
         >>> angle(70, 10, 20, 0) / 10
-        angle(7, 1, 2, 0)
+        angle(7, 1, 2, 0.0)
         """
         res = angle(
             self._degrees / scalar,
@@ -155,5 +167,3 @@ class angle(object):
             and self._seconds == other._seconds
             and self._thirds == other._thirds
         )
-
-
