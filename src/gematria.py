@@ -88,7 +88,7 @@ def degree_to_mazal(degree_num: int):
         >>> degree_to_mazal(70)
         'תאומים'
     """
-    return MAZALOT[(degree_num//30) % 12]
+    return MAZALOT[int(degree_num//30) % 12]
 
 
 def mazal_to_degree(mazal: str):

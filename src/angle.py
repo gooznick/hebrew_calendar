@@ -48,6 +48,8 @@ class angle(object):
         self._degrees = int(self._parts / self.PARTS)
         self._parts = int(self._parts - self._degrees * self.PARTS)
         self._thirds = float(self._thirds)
+        if abs(self._thirds) < 1e-3:
+            self._thirds = 0.0
 
     def remove_circles(self):
         self._degrees %= self.DEGREES
@@ -56,12 +58,35 @@ class angle(object):
     def to_degree_in_mazal(self):
         self._degrees = self._degrees % 30
 
+    def to_mazal(self):
+        mazal = gematria.degree_to_mazal(self.as_degrees_fraction())
+        angle_in_mazal = angle(self.as_degrees_fraction() % 30)
+        return mazal, angle_in_mazal
+
     def remove_thirds(self):
         self._thirds = 0
         return self
 
     def round_thirds(self):
         self._thirds = round(self._thirds)
+        return self
+
+    def round_seconds(self):
+        # פרק יג הלכה י
+        # ואל תפנה אל השניות
+        if self._thirds > self.PARTS//2:
+            self._parts = self._parts+1
+        self._thirds = 0
+        self.__normalize()
+        return self
+
+    def round_parts(self):
+        # פרק יג הלכה ט
+        if self._parts > self.PARTS//2:
+            self._degrees = self._degrees+1
+        self._thirds = 0
+        self._parts = 0
+        self.__normalize()
         return self
 
     def as_degrees_fraction(self):
@@ -143,6 +168,38 @@ class angle(object):
                     self._seconds, self._thirds) * scalar
         return res
 
+    def __gt__(self, other):
+        """
+        >>> angle(9,1,2) > 10
+        False
+
+        >>> angle(7,1,2) > angle(7,1,1)
+        True
+        """
+        if type(other) == angle:
+            other = other.as_degrees_fraction()
+        return self.as_degrees_fraction() > other
+
+    def __rsub__(self, scalar):
+        """
+        >>> 10 - angle(7,1,2)
+        angle(2, 58, 58, 0.0)
+        """
+        if type(scalar) == angle:
+            scalar = scalar.as_degrees_fraction()
+        res = angle(scalar - self.as_degrees_fraction())
+        return res
+
+    def __sub__(self, scalar):
+        """
+        >>> angle(17,1,2) - 10
+        angle(7, 1, 2, 0.0)
+        """
+        if type(scalar) == angle:
+            scalar = scalar.as_degrees_fraction()
+        res = angle(self.as_degrees_fraction() - scalar)
+        return res
+
     def __truediv__(self, scalar):
         """
         >>> angle(70, 10, 20, 0) / 10
@@ -161,6 +218,8 @@ class angle(object):
         >>> angle(7, 1, 2, 0) == angle(7, 1, 2)
         True
         """
+        if type(other) == float:
+            other = angle(other)
         return (
             self._degrees == other._degrees
             and self._parts == other._parts

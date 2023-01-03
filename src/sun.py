@@ -7,11 +7,12 @@ import gematria
 from angle import angle
 from hdate import HDate
 import molad
+import math
 
 
 class Sun:
     """
-    Sun movements. Ch. 12..
+    Sun movements. Ch. 12,13
     """
 
     def __init__(
@@ -46,14 +47,80 @@ class Sun:
         return location.remove_circles()
 
     @staticmethod
-    def aphelion(date: HDate):
+    def location(date: HDate, correction_func=None):
         """
-        Compute the aphelion of the sun in a specific day
+        Compute the location of the sun in a specific day (ecliptic long of the sun)
+        פרק יג הלכה א
         """
-        days = molad.Months.days_diff(location["t0"], date)
-        location = location["x0"] + location["v"]*days
+        if correction_func == None:
+            correction_func = Sun.rambam_correction
+        mean_location = Sun.mean_location(date)
+        aphelion = Sun.aphelion(date)
+        sun_path = aphelion - mean_location
 
-        return location.remove_circles()
+        correction = correction_func(sun_path)
+        location = mean_location - correction
+
+        return location
+
+    @staticmethod
+    def correction(angle):
+        """
+        Compute the correction (מנת המסלול)
+        פרק יג הלכה ב
+        """
+        if angle > 180:
+            angle = 360 - angle
+        angle = round(angle.as_degrees_fraction())
+        assert (angle <= 180.0)
+        assert (angle >= 0.0)
+        angle_rad = angle/180*math.pi
+        correction = math.atan2(math.sin(angle_rad),
+                                (math.cos(angle_rad) + 28.877))
+        correction_deg = correction*180/math.pi
+
+        return correction_deg
+
+    @staticmethod
+    def rambam_correction(path):
+        """
+        Compute the correction (מנת המסלול)
+        פרק יג הלכה ד-ח
+        """
+        if path > 180:
+            path = 360 - path
+        path = round(path.as_degrees_fraction())
+        assert (path <= 180.0)
+        assert (path >= 0.0)
+        correction_values = {
+            0: angle(0),
+            10: angle(0, 20),
+            20: angle(0, 40),
+            30: angle(0, 58),
+            40: angle(1, 15),
+            50: angle(1, 29),
+            60: angle(1, 41),
+            70: angle(1, 51),
+            80: angle(1, 57),
+            90: angle(1, 59),
+            100: angle(1, 58),
+            110: angle(1, 53),
+            120: angle(1, 45),
+            130: angle(1, 33),
+            140: angle(1, 19),
+            150: angle(1, 1),
+            160: angle(0, 42),
+            170: angle(0, 21),
+            180: angle(0),
+        }
+
+        floor = math.floor(path/10)*10
+        ceil = math.ceil(path/10)*10
+        floor_cor = correction_values[floor]
+        ceil_cor = correction_values[ceil]
+        correction_per_degree = (ceil_cor - floor_cor)/10
+        correction = floor_cor + correction_per_degree*(path-floor)
+        return correction
 
 
 RambamBeginningDay = HDate("ג", "ניסן", "ד-תתקלח")
