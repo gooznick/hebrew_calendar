@@ -70,6 +70,7 @@ class Sun:
         פרק יג הלכה ב
         """
         if angle > 180:
+            # TODO: this should make inversion of the correction direction
             angle = 360 - angle
         angle = round(angle.as_degrees_fraction())
         assert (angle <= 180.0)
@@ -88,6 +89,7 @@ class Sun:
         פרק יג הלכה ד-ח
         """
         if path > 180:
+            # TODO: this should make inversion of the correction direction
             path = 360 - path
         path = round(path.as_degrees_fraction())
         assert (path <= 180.0)
