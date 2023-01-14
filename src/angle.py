@@ -75,7 +75,7 @@ class angle(object):
         # פרק יג הלכה י
         # ואל תפנה אל השניות
         if self._thirds > self.PARTS//2:
-            self._parts = self._parts+1
+            self._seconds = self._seconds+1
         self._thirds = 0
         self.__normalize()
         return self
