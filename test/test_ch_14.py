@@ -1,8 +1,8 @@
-import gematria
 from angle import angle
 from hdate import HDate
 import pytest
 import moon
+import sun
 
 
 def test_halacha_2():
@@ -16,9 +16,6 @@ def test_halacha_2():
         (moon.mean_location_coefs["v"]*10000).remove_circles() == angle("ג", "נח", "כ"))
     assert (
         (moon.mean_location_coefs["v"]*29).remove_circles().round_seconds() == angle("כב", 6, "נו"))
-
-
-print((moon.mean_location_coefs["v"]*354).remove_circles())
 
 
 @pytest.mark.xfail
@@ -54,3 +51,19 @@ def test_halacha_4():
     assert ((d100*3+d10*5+d1*4) .remove_circles() == expected)
     assert ((d29*12+d1*6) .remove_circles() == expected)
     assert ((moon.mean_path_coefs["v"]*354).remove_circles() == expected)
+
+
+def test_halacha_5():
+    today = HDate("כט", "שבט", "ה-תשפג")
+    today = HDate("כט", "טבת", "ה-תשפג")
+    today = HDate("כט", "כסלו", "ה-תשפג")
+    for month in ["תשרי", "חשון", "כסלו"]:
+        for days in range(1, 30):
+            today = HDate(days, month, "ה-תשפג")
+            print(today)
+
+            moon_during_sunset = moon.Moon.mean_location(today)
+            sun_at_18 = sun.Sun.location(today)
+
+            print((0-moon_during_sunset +
+                  sun_at_18).remove_circles().as_degrees_fraction())
