@@ -67,8 +67,8 @@ RambamBeginningDay = HDate("ג", "ניסן", "ד-תתקלח")
 mean_location_coefs = {"t0": RambamBeginningDay, "x0": angle(1, "יד", "מג") + angle(
     gematria.mazal_to_degree("שור")), "v": angle("יג", "י", "לה")+angle(0, 0, 3)/100}  # פרק יד הלכה ב,ד מהלך אמצע הירח
 
-mean_path_coefs = {"t0": RambamBeginningDay, "x0": angle("פד", "כח", "מב") + angle(
-    gematria.mazal_to_degree("שור")), "v": angle("יג", 3, "נד")-angle(0, 0, 7)/100}  # פרק יד הלכה ג,ד  אמצע המסלול
+mean_path_coefs = {"t0": RambamBeginningDay, "x0": angle("פד", "כח", "מב"), "v": angle(
+    "יג", 3, "נד")-angle(0, 0, 7)/100}  # פרק יד הלכה ג,ד  אמצע המסלול
 
 HazonShamaimBeginningDay = HDate("א", "תשרי", "ה-תשנג")
 
