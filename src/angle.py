@@ -80,11 +80,28 @@ class angle(object):
         self.__normalize()
         return self
 
+    def round_to_parts(self):
+        # פרק יג הלכה י
+        # ואל תפנה אל השניות
+        if self._thirds > self.PARTS//2:
+            self._seconds = self._seconds+1
+        if self._seconds > self.PARTS//2:
+            self._parts = self._parts+1
+        self._thirds = 0
+        self._seconds = 0
+        self.__normalize()
+        return self
+
+    def remove_seconds(self):
+        self._thirds = 0
+        self._seconds = 0
+        return self
+
     def round_parts(self):
         # פרק יג הלכה ט
+        self.round_seconds()
         if self._parts > self.PARTS//2:
             self._degrees = self._degrees+1
-        self._thirds = 0
         self._parts = 0
         self.__normalize()
         return self
