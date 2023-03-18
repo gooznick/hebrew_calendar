@@ -3,6 +3,7 @@ from hdate import HDate
 import pytest
 import moon
 import sun
+import copy
 
 
 def test_halacha_8():
@@ -30,7 +31,7 @@ def test_halacha_8():
     assert true_path == angle(108, 21)
 
 
-def test_halacha_9():
+def test_halacha_9a():
 
     the_day = HDate("ב", "אייר", "ד-תתקלח")
 
@@ -42,4 +43,39 @@ def test_halacha_9():
     true_location.round_to_parts()
     assert true_location == angle(48, 36)
 
-    print(true_location)
+
+def test_halacha_9b():
+
+    the_day = HDate("א", "חשון", "ה-תשנג")
+
+    true_location = moon.Moon.true_location(the_day)
+    true_location.round_to_parts()
+
+    assert true_location == angle(237, 35)
+
+
+def test_truth_molad():
+    the_day1 = HDate("כט", "שבט", "ה-תשפג")
+    sun_location = sun.Sun.location(the_day1).as_degrees_fraction()
+    moon_location = moon.Moon.true_location(the_day1).as_degrees_fraction()
+    diff1 = sun_location - moon_location
+    print(sun_location - moon_location)
+    the_day = copy.copy(the_day1)
+    the_day._month_day += 1
+    sun_location2 = sun.Sun.location(the_day).as_degrees_fraction()
+    moon_location2 = moon.Moon.true_location(the_day).as_degrees_fraction()
+
+    print(sun_location2 - moon_location2)
+    diff2 = sun_location2 - moon_location2
+    distance_moon_sun_per_hour = (diff1-diff2) / 24
+    hours_to_no_distance = diff1/distance_moon_sun_per_hour
+    print(hours_to_no_distance)
+    # so, the molad is at the_day+18+hours_to_no_distance
+    if hours_to_no_distance > 24:
+        the_day._month_day += 1
+        hours_to_no_distance -= 24
+
+    hours = angle(18+hours_to_no_distance)
+    print(the_day1, hours.degrees, ":", hours.parts)
+    import pdb
+    pdb.set_trace()

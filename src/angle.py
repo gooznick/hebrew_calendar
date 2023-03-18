@@ -137,30 +137,19 @@ class angle(object):
     def degrees(self):
         return self._degrees
 
-    def __add__(self, d):
+    def __add__(self, scalar):
         """
         >>> angle(1,2,3) + angle(7,1,2)
         angle(8, 3, 5, 0.0)
         """
-        res = angle(
-            self._degrees + d._degrees,
-            self._parts + d._parts,
-            self._seconds + d._seconds,
-            self._thirds + d._thirds,
-        )
-        return res
-
-    def __sub__(self, d):
-        """
-        >>> angle(37,4,3) - angle(7,1,2)
-        angle(30, 3, 1, 0.0)
-        """
-        res = angle(
-            self._degrees - d._degrees,
-            self._parts - d._parts,
-            self._seconds - d._seconds,
-            self._thirds - d._thirds,
-        )
+        if type(scalar) == angle:
+            return angle(
+                self._degrees + scalar._degrees,
+                self._parts + scalar._parts,
+                self._seconds + scalar._seconds,
+                self._thirds + scalar._thirds,
+            )
+        res = angle(self.as_degrees_fraction() + scalar)
         return res
 
     def __mul__(self, scalar):
@@ -207,13 +196,28 @@ class angle(object):
         res = angle(scalar - self.as_degrees_fraction())
         return res
 
+    def __radd__(self, scalar):
+        """
+        >>> 10 + angle(7,1,2)
+        angle(17, 1, 2, 0.0)
+        """
+        if type(scalar) == angle:
+            scalar = scalar.as_degrees_fraction()
+        res = angle(scalar + self.as_degrees_fraction())
+        return res
+
     def __sub__(self, scalar):
         """
         >>> angle(17,1,2) - 10
         angle(7, 1, 2, 0.0)
         """
         if type(scalar) == angle:
-            scalar = scalar.as_degrees_fraction()
+            return angle(
+                self._degrees - scalar._degrees,
+                self._parts - scalar._parts,
+                self._seconds - scalar._seconds,
+                self._thirds - scalar._thirds,
+            )
         res = angle(self.as_degrees_fraction() - scalar)
         return res
 

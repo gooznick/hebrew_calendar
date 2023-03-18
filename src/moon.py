@@ -101,6 +101,7 @@ class Moon:
         if true_path.as_degrees_fraction() < 180:
             mean_location -= true_path_correction
         elif true_path.as_degrees_fraction() > 180:
+
             mean_location += true_path_correction
         return mean_location
 
