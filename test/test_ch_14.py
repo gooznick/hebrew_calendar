@@ -53,25 +53,25 @@ def test_halacha_4():
     assert ((moon.mean_path_coefs["v"]*354).remove_circles() == expected)
 
 
-def test_halacha_5():
-    today = HDate("כט", "שבט", "ה-תשפג")
-    today = HDate("כט", "טבת", "ה-תשפג")
-    today = HDate("כט", "כסלו", "ה-תשפג")
-    for month in ["תשרי", "חשון", "כסלו", "טבת"]:
-        for days in range(1, 30):
-            today = HDate(days, month, "ה-תשפג")
-            print(today)
+# def test_halacha_5():
+#     today = HDate("כט", "שבט", "ה-תשפג")
+#     today = HDate("כט", "טבת", "ה-תשפג")
+#     today = HDate("כט", "כסלו", "ה-תשפג")
+#     for month in ["תשרי", "חשון", "כסלו", "טבת"]:
+#         for days in range(1, 30):
+#             today = HDate(days, month, "ה-תשפג")
+#             print(today)
 
-            moon_during_sunset = moon.Moon.mean_location_on_sunset(today)
-            sun_at_18 = sun.Sun.location(today)
+#             moon_during_sunset = moon.Moon.mean_location_on_sunset(today)
+#             sun_at_18 = sun.Sun.location(today)
 
-            print((0-moon_during_sunset +
-                  sun_at_18).remove_circles().as_degrees_fraction())
+#             print((0-moon_during_sunset +
+#                   sun_at_18).remove_circles().as_degrees_fraction())
 
 
-def test_halacha_6():
-    today = HDate("ב", "אייר", "ד-תתקלח")
-    # today = HDate("א", "תשרי", "ה-תשנג")
-    # today = HDate("ג", "ניסן", 4938)
-    print(moon.Moon.mean_path(today))
-    print(moon.Moon.mean_location(today))
+# def test_halacha_6():
+#     today = HDate("ב", "אייר", "ד-תתקלח")
+#     # today = HDate("א", "תשרי", "ה-תשנג")
+#     # today = HDate("ג", "ניסן", 4938)
+#     print(moon.Moon.mean_path(today))
+#     print(moon.Moon.mean_location(today))

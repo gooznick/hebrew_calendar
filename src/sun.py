@@ -118,11 +118,11 @@ class Sun:
 
         floor = math.floor(path/10)*10
         ceil = math.ceil(path/10)*10
-        floor_cor = correction_values[floor]
-        ceil_cor = correction_values[ceil]
+        floor_cor = correction_values[floor].as_degrees_fraction()
+        ceil_cor = correction_values[ceil].as_degrees_fraction()
         correction_per_degree = (ceil_cor - floor_cor)/10
         correction = floor_cor + correction_per_degree*(path-floor)
-        return correction
+        return angle(correction)
 
 
 RambamBeginningDay = HDate("ג", "ניסן", "ד-תתקלח")
@@ -137,3 +137,10 @@ hs_location_coefs = {"t0": HazonShamaimBeginningDay, "x0": angle(
     186.68737), "v": location_coefs["v"]}  # חזון שמים עמ' מז
 hs_aphelion_coefs = {"t0": HazonShamaimBeginningDay, "x0": angle(
     102, 49, 44.76), "v": aphelion_coefs["v"]}  # חזזון שמים עמ' מה הערה 6
+
+
+def set_hazon_shamaim():
+    global location_coefs
+    global aphelion_coefs
+    location_coefs = hs_location_coefs
+    aphelion_coefs = hs_aphelion_coefs

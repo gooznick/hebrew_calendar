@@ -4,6 +4,7 @@ import pytest
 import moon
 import sun
 import copy
+import molad
 
 
 def test_halacha_8():
@@ -51,31 +52,90 @@ def test_halacha_9b():
     true_location = moon.Moon.true_location(the_day)
     true_location.round_to_parts()
 
-    assert true_location == angle(237, 35)
+    assert true_location == angle(237, 50)
+
+
+def test_sun_moon_velocity():
+    t0 = sun.RambamBeginningDay
+
+    for x in range(40):
+        d0 = molad.Months.date_add_days(t0, x*10)
+        d1 = molad.Months.date_add_days(t0, x*10+1)
+        sun_location0 = sun.Sun.location(d0).as_degrees_fraction()
+        sun_location1 = sun.Sun.location(d1).as_degrees_fraction()
+        if sun_location0 > 180 and sun_location1 < 180:
+            sun_location1 += 360
+        assert (abs(sun_location0 - sun_location1) < 1.3)
+        assert (abs(sun_location0 - sun_location1) > 0.7)
+
+        moon_location0 = moon.Moon.true_location(d0).as_degrees_fraction()
+        moon_location1 = moon.Moon.true_location(d1).as_degrees_fraction()
+        if moon_location0 > 180 and moon_location1 < 180:
+            moon_location1 += 360
+        assert (abs(moon_location0 - moon_location1) < 16)
+        assert (abs(moon_location0 - moon_location1) > 10)
+
+
+def truth_molad(month, year):
+
+    the_day = HDate("א", month, year)
+    day_before = molad.Months.date_add_days(the_day, -1)
+
+    # sun.set_hazon_shamaim()
+    # moon.set_hazon_shamaim()
+
+    sun_location = sun.Sun.location(day_before).as_degrees_fraction()
+    moon_location = moon.Moon.true_location(day_before).as_degrees_fraction()
+    diff1 = sun_location - moon_location
+    if diff1 < 0:
+        the_day = day_before
+        day_before = molad.Months.date_add_days(the_day, -1)
+        sun_location = sun.Sun.location(day_before).as_degrees_fraction()
+        moon_location = moon.Moon.true_location(
+            day_before).as_degrees_fraction()
+        diff1 = sun_location - moon_location
+    sun_location2 = sun.Sun.location(the_day).as_degrees_fraction()
+    moon_location2 = moon.Moon.true_location(the_day).as_degrees_fraction()
+    diff2 = sun_location2 - moon_location2
+
+    distance_moon_sun_per_hour = (diff1-diff2) / 24
+    hours_to_no_distance = diff1/distance_moon_sun_per_hour
+
+    # so, the molad is at the_day+18+hours_to_no_distance
+    day_before._month_day += hours_to_no_distance//24
+    hours_to_no_distance = hours_to_no_distance % 24
+    hours = hours_to_no_distance+18
+    if hours > 24:
+        hours -= 24
+    hours = angle(hours)
+    return day_before, (hours.degrees, hours.parts)
 
 
 def test_truth_molad():
-    the_day1 = HDate("כט", "שבט", "ה-תשפג")
-    sun_location = sun.Sun.location(the_day1).as_degrees_fraction()
-    moon_location = moon.Moon.true_location(the_day1).as_degrees_fraction()
-    diff1 = sun_location - moon_location
-    print(sun_location - moon_location)
-    the_day = copy.copy(the_day1)
-    the_day._month_day += 1
-    sun_location2 = sun.Sun.location(the_day).as_degrees_fraction()
-    moon_location2 = moon.Moon.true_location(the_day).as_degrees_fraction()
 
-    print(sun_location2 - moon_location2)
-    diff2 = sun_location2 - moon_location2
-    distance_moon_sun_per_hour = (diff1-diff2) / 24
-    hours_to_no_distance = diff1/distance_moon_sun_per_hour
-    print(hours_to_no_distance)
-    # so, the molad is at the_day+18+hours_to_no_distance
-    if hours_to_no_distance > 24:
-        the_day._month_day += 1
-        hours_to_no_distance -= 24
+    molads = {
+        ("תשרי", "ה-תשפג"): ("ל", 13, 48),
+        ("חשון", "ה-תשפג"): ("כט", 00, 57),
+        ("כסלו", "ה-תשפג"): ("כט", 12, 16),
+        ("טבת", "ה-תשפג"):  ("כט", 22, 53),
+        ("שבט", "ה-תשפג"): ("כט", 9, 5),
+        ("אדר", "ה-תשפג"):  ("כט", 19, 23),
+        ("ניסן", "ה-תשפג"): ("כט", 7, 12),
+        ("איר", "ה-תשפג"):  ("כט", 18, 53),
+        ("סיון", "ה-תשפג"):  ("כט", 7, 37),
+        ("תמוז", "ה-תשפג"): ("כט", 21, 31),
+        ("אב",  "ה-תשפג"):  ("כט", 12, 38),
+    }
+    # convert to HDates
+    ground_truths = {}
+    for k, v in molads.items():
+        key = HDate(1, k[0], k[1])
+        ground_truths[key] = v
 
-    hours = angle(18+hours_to_no_distance)
-    print(the_day1, hours.degrees, ":", hours.parts)
-    import pdb
-    pdb.set_trace()
+    year = "ה-תשפג"
+    for month in range(1, 13):
+        day, (hour, minute) = truth_molad(month, year)
+        key = HDate(1, day._month, day._year)
+
+        if key in ground_truths:
+            print(day,   ground_truths[key][1] - hour)

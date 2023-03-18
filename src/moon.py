@@ -147,7 +147,7 @@ class Moon:
             if double_distance.as_degrees_fraction() >= min and double_distance.as_degrees_fraction() < max:
                 mean_path += correction
 
-        return mean_path
+        return mean_path.remove_circles()
 
     @staticmethod
     def mean_path(date: HDate):
@@ -176,4 +176,11 @@ HazonShamaimBeginningDay = HDate("א", "תשרי", "ה-תשנג")
 hs_location_coefs = {"t0": HazonShamaimBeginningDay, "x0": angle(
     196.71), "v": mean_location_coefs["v"]}  # חזון שמים עמ' סח
 hs_path_coefs = {"t0": HazonShamaimBeginningDay, "x0": angle(
-    228.71), "v": mean_path_coefs["v"]}  # חזזון שמים עמ' סח
+    228.71), "v": mean_path_coefs["v"]}  # חזון שמים עמ' סח
+
+
+def set_hazon_shamaim():
+    global mean_location_coefs
+    global mean_path_coefs
+    mean_location_coefs = hs_location_coefs
+    mean_path_coefs = hs_path_coefs
