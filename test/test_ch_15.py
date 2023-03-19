@@ -5,6 +5,9 @@ import moon
 import sun
 import copy
 import molad
+import math
+
+import ephem
 
 
 def test_halacha_8():
@@ -53,6 +56,21 @@ def test_halacha_9b():
     true_location.round_to_parts()
 
     assert true_location == angle(237, 50)
+
+
+@pytest.mark.xfail
+def test_sun_location():
+
+    d0 = HDate("א", "חשון", "ה-תשנג")
+    for x in range(40):
+        the_day = molad.Months.date_add_days(d0, x*10)
+
+        true_location = sun.Sun.location(the_day).as_degrees_fraction()
+        gdate = molad.to_georgian(the_day)
+        esun = ephem.Sun()
+        esun.compute(gdate)
+        ecliptic_sun_longitude = math.degrees(ephem.Ecliptic(esun).lon)
+        assert abs(ecliptic_sun_longitude-true_location) < .2
 
 
 def test_sun_moon_velocity():
