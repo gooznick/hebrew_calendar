@@ -9,6 +9,12 @@ from leap_years import leapYear
 import duration
 import gematria
 from hdate import HDate
+from datetime import date, timedelta
+
+try:
+    import ephem
+except ImportError:
+    ephem = None
 
 
 class YearType(Enum):
@@ -27,6 +33,34 @@ YEAR_TYPES = {
     # פרק ח הלכה ח
     True: {4: YearType.PARTIAL, 5: YearType.ORDINAL, 6: YearType.FULL},
 }
+
+
+def to_georgian_BC(hdate: HDate):
+    h_first = HDate(25, 12, 0)
+    # According to wikipedia, it should be -3760,9,21
+    e_first = ephem.Date('-3760/9/22')
+    days = Months.days_diff(h_first, hdate)
+    return ephem.Date(e_first+days)
+
+
+def to_georgian(hdate: HDate):
+    h_one = HDate("יח", "טבת", "ג-תשסא")
+    g_one = date(1, 1, 1)
+    days = Months.days_diff(h_one, hdate)
+    return g_one+timedelta(days=days)
+
+
+def from_georgian(gdate: typing.Union[date, ephem.Date]):
+    if type(gdate) == date:
+        h_one = HDate("יח", "טבת", "ג-תשסא")
+        g_one = date(1, 1, 1)
+        days = (gdate - g_one).days
+        return Months.date_add_days(h_one, days)
+    h_first = HDate(25, 12, 0)
+    # According to wikipedia, it should be -3760,9,21
+    e_first = ephem.Date('-3760/9/22')
+    days = int(gdate - e_first)
+    return Months.date_add_days(h_first, days)
 
 
 class Months:
