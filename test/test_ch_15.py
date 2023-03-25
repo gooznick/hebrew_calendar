@@ -191,16 +191,18 @@ def test_truth_molad():
         ("תמוז", "ה-תשפג"): ("כט", 21, 31),
         ("אב", "ה-תשפג"): ("כט", 12, 38),
     }
-    # convert to HDates
-    ground_truths = {}
-    for k, v in molads.items():
-        key = HDate(1, k[0], k[1])
-        ground_truths[key] = v
 
-    year = "ה-תשפג"
-    for month in range(1, 13):
-        day, (hour, minute) = truth_molad(month, year)
-        key = HDate(1, day._month, day._year)
+    for year in ["ה-תשפג", "ה-תשפב", "ה-תשפא"]:
+        for month in range(1, 12):
+            day, (hour, minute) = truth_molad(month, year)
+            key = HDate(1, day._month, day._year)
 
-        if key in ground_truths:
-            print(day, ground_truths[key][1] - hour)
+            gdate = molad.to_georgian(HDate(15, day._month, day._year))
+
+            new_moon = ephem.next_new_moon(gdate)
+            ground_truth_hour = new_moon.datetime().hour + 2
+            diff = ground_truth_hour - hour
+            if diff > 12:
+                diff = 24-diff
+
+            assert diff <= 3
