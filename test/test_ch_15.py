@@ -95,6 +95,30 @@ def test_moon_location():
         assert diff < 3.2
 
 
+def calc_sun_location(date: HDate):
+    return sun.Sun.location(date).as_degrees_fraction()
+
+
+def calc_sun_location_ephem(date: HDate):
+    gdate = molad.to_georgian(date)
+    esun = ephem.Sun()
+    esun.compute(gdate)
+    return math.degrees(ephem.Ecliptic(esun).lon)
+
+
+def calc_moon_location(date: HDate):
+    return moon.Moon.true_location(date).as_degrees_fraction()
+
+
+def calc_moon_location_ephem(date: HDate):
+    gdate = molad.to_georgian(date)
+    gdate = datetime.datetime(
+        year=gdate.year, month=gdate.month, day=gdate.day-1, hour=18)
+    emoon = ephem.Moon()
+    emoon.compute(gdate)
+    return math.degrees(ephem.Ecliptic(emoon).lon)
+
+
 def test_sun_moon_velocity():
     t0 = sun.RambamBeginningDay
 
@@ -117,24 +141,27 @@ def test_sun_moon_velocity():
 
 
 def truth_molad(month, year):
+
     the_day = HDate("א", month, year)
     day_before = molad.Months.date_add_days(the_day, -1)
 
     # sun.set_hazon_shamaim()
     # moon.set_hazon_shamaim()
 
-    sun_location = sun.Sun.location(day_before).as_degrees_fraction()
-    moon_location = moon.Moon.true_location(day_before).as_degrees_fraction()
+    sun_location = calc_sun_location(day_before)
+    moon_location = calc_moon_location(day_before)
     diff1 = sun_location - moon_location
+    if diff1 < -180:
+        diff1 += 360
     if diff1 < 0:
         the_day = day_before
         day_before = molad.Months.date_add_days(the_day, -1)
-        sun_location = sun.Sun.location(day_before).as_degrees_fraction()
-        moon_location = moon.Moon.true_location(
-            day_before).as_degrees_fraction()
+        sun_location = calc_sun_location(day_before)
+        moon_location = calc_moon_location(
+            day_before)
         diff1 = sun_location - moon_location
-    sun_location2 = sun.Sun.location(the_day).as_degrees_fraction()
-    moon_location2 = moon.Moon.true_location(the_day).as_degrees_fraction()
+    sun_location2 = calc_sun_location(the_day)
+    moon_location2 = calc_moon_location(the_day)
     diff2 = sun_location2 - moon_location2
 
     distance_moon_sun_per_hour = (diff1 - diff2) / 24
@@ -148,25 +175,6 @@ def truth_molad(month, year):
         hours -= 24
     hours = angle(hours)
     return day_before, (hours.degrees, hours.parts)
-
-
-def test_truth_molad1():
-    molads = {
-        ("אדר", "ה-תשפג"): ("כט", 19, 23),
-    }
-    # convert to HDates
-    ground_truths = {}
-    for k, v in molads.items():
-        key = HDate(1, k[0], k[1])
-        ground_truths[key] = v
-
-    year = "ה-תשפג"
-    for month in range(1, 13):
-        day, (hour, minute) = truth_molad(month, year)
-        key = HDate(1, day._month, day._year)
-
-        if key in ground_truths:
-            print(day, ground_truths[key][1] - hour)
 
 
 def test_truth_molad():

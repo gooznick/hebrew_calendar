@@ -132,6 +132,7 @@ class Moon:
         """
         מקום הירח האמיתי לשעת הראיה, פרק ט"ו הלכה ד
         """
+
         true_path_correction = Moon.true_path_correction(
             date).as_degrees_fraction()
         true_path = Moon.true_path(date)

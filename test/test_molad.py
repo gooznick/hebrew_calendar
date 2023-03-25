@@ -12,7 +12,8 @@ def test_days_diff():
 def test_date_add_days():
     for d in range(500, 800, 3):
         date = HDate(4, 5, 5700)
-        assert Months.date_add_days(date, d) == Months.date_add_days_o_n_(date, d)
+        assert Months.date_add_days(
+            date, d) == Months.date_add_days_o_n_(date, d)
 
 
 def test_year_type():
