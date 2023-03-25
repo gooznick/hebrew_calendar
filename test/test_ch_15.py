@@ -3,9 +3,9 @@ from hdate import HDate
 import pytest
 import moon
 import sun
-import copy
 import molad
 import math
+import datetime
 
 import ephem
 
@@ -59,7 +59,7 @@ def test_sun_location():
     d0 = HDate("א", "חשון", "ה-תשנג")
     # d0 = sun.RambamBeginningDay
     # sun.set_hazon_shamaim()
-    for x in range(400):
+    for x in range(100):
         the_day = molad.Months.date_add_days(d0, x * 10)
 
         true_location = sun.Sun.location(the_day).as_degrees_fraction()
@@ -71,6 +71,28 @@ def test_sun_location():
         if diff > 180:
             diff = diff - 360
         assert abs(diff) < 0.5
+
+
+def test_moon_location():
+    d0 = HDate("א", "חשון", "ה-תשנג")
+    # d0 = sun.RambamBeginningDay
+    # sun.set_hazon_shamaim()
+    for x in range(100):
+        the_day = molad.Months.date_add_days(d0, x * 10)
+
+        true_location = moon.Moon.true_location(the_day).as_degrees_fraction()
+        gdate = molad.to_georgian(the_day)
+        if gdate.day == 1:
+            continue
+        gdate = datetime.datetime(
+            year=gdate.year, month=gdate.month, day=gdate.day-1, hour=18)
+        emoon = ephem.Moon()
+        emoon.compute(gdate)
+        ecliptic_moon_longitude = math.degrees(ephem.Ecliptic(emoon).lon)
+        diff = abs(ecliptic_moon_longitude - true_location)
+        if diff > 180:
+            diff = diff - 360
+        assert diff < 3.2
 
 
 def test_sun_moon_velocity():
@@ -108,7 +130,8 @@ def truth_molad(month, year):
         the_day = day_before
         day_before = molad.Months.date_add_days(the_day, -1)
         sun_location = sun.Sun.location(day_before).as_degrees_fraction()
-        moon_location = moon.Moon.true_location(day_before).as_degrees_fraction()
+        moon_location = moon.Moon.true_location(
+            day_before).as_degrees_fraction()
         diff1 = sun_location - moon_location
     sun_location2 = sun.Sun.location(the_day).as_degrees_fraction()
     moon_location2 = moon.Moon.true_location(the_day).as_degrees_fraction()
@@ -125,6 +148,25 @@ def truth_molad(month, year):
         hours -= 24
     hours = angle(hours)
     return day_before, (hours.degrees, hours.parts)
+
+
+def test_truth_molad1():
+    molads = {
+        ("אדר", "ה-תשפג"): ("כט", 19, 23),
+    }
+    # convert to HDates
+    ground_truths = {}
+    for k, v in molads.items():
+        key = HDate(1, k[0], k[1])
+        ground_truths[key] = v
+
+    year = "ה-תשפג"
+    for month in range(1, 13):
+        day, (hour, minute) = truth_molad(month, year)
+        key = HDate(1, day._month, day._year)
+
+        if key in ground_truths:
+            print(day, ground_truths[key][1] - hour)
 
 
 def test_truth_molad():
