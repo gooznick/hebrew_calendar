@@ -11,7 +11,7 @@ class angle(object):
 
     PARTS = 60  # פרק יא הלכה ז
     DEGREES = 360
-    THIRDS_IN_CIRCLE = DEGREES*(PARTS**3)
+    THIRDS_IN_CIRCLE = DEGREES * (PARTS**3)
 
     def __init__(self, degrees=0, parts=0, seconds=0, thirds=0):
         self._degrees = gematria.str_to_num(degrees)
@@ -25,18 +25,15 @@ class angle(object):
         return f"שלישיות {self._thirds} שניות {self._seconds} חלקים {self._parts} מעלות {self._degrees}"
 
     def __repr__(self):
-        return (
-            f"angle({self._degrees}, {self._parts}, {self._seconds}, {self._thirds})"
-        )
+        return f"angle({self._degrees}, {self._parts}, {self._seconds}, {self._thirds})"
 
     def __normalize(self):
         """
         Convert to int within the correct range of each member
         """
         thirds = (
-            ((self._degrees * self.PARTS + self._parts) * self.PARTS + self._seconds) * self.PARTS +
-            self._thirds
-        )
+            (self._degrees * self.PARTS + self._parts) * self.PARTS + self._seconds
+        ) * self.PARTS + self._thirds
         if thirds < 0:
             thirds += self.THIRDS_IN_CIRCLE
         self._seconds = int(thirds / self.PARTS)
@@ -74,8 +71,8 @@ class angle(object):
     def round_seconds(self):
         # פרק יג הלכה י
         # ואל תפנה אל השניות
-        if self._thirds > self.PARTS//2:
-            self._seconds = self._seconds+1
+        if self._thirds > self.PARTS // 2:
+            self._seconds = self._seconds + 1
         self._thirds = 0
         self.__normalize()
         return self
@@ -83,10 +80,10 @@ class angle(object):
     def round_to_parts(self):
         # פרק יג הלכה י
         # ואל תפנה אל השניות
-        if self._thirds > self.PARTS//2:
-            self._seconds = self._seconds+1
-        if self._seconds > self.PARTS//2:
-            self._parts = self._parts+1
+        if self._thirds > self.PARTS // 2:
+            self._seconds = self._seconds + 1
+        if self._seconds > self.PARTS // 2:
+            self._parts = self._parts + 1
         self._thirds = 0
         self._seconds = 0
         self.__normalize()
@@ -100,8 +97,8 @@ class angle(object):
     def round_parts(self):
         # פרק יג הלכה ט
         self.round_seconds()
-        if self._parts > self.PARTS//2:
-            self._degrees = self._degrees+1
+        if self._parts > self.PARTS // 2:
+            self._degrees = self._degrees + 1
         self._parts = 0
         self.__normalize()
         return self
@@ -113,11 +110,7 @@ class angle(object):
         """
         return (
             self._degrees
-            + (
-                self._parts
-                + (self._seconds + (self._thirds / self.PARTS))
-                / self.PARTS
-            )
+            + (self._parts + (self._seconds + (self._thirds / self.PARTS)) / self.PARTS)
             / self.PARTS
         )
 
@@ -170,8 +163,7 @@ class angle(object):
         >>> 10 * angle(7,1,2)
         angle(70, 10, 20, 0.0)
         """
-        res = angle(self._degrees, self._parts,
-                    self._seconds, self._thirds) * scalar
+        res = angle(self._degrees, self._parts, self._seconds, self._thirds) * scalar
         return res
 
     def __gt__(self, other):

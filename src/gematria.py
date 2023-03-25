@@ -88,7 +88,7 @@ def degree_to_mazal(degree_num: int):
         >>> degree_to_mazal(70)
         'תאומים'
     """
-    return MAZALOT[int(degree_num//30) % 12]
+    return MAZALOT[int(degree_num // 30) % 12]
 
 
 def mazal_to_degree(mazal: str):
@@ -102,7 +102,7 @@ def mazal_to_degree(mazal: str):
     index = MAZALOT.index(mazal)
     if index == -1:
         return None
-    return index*30
+    return index * 30
 
 
 def num_to_tkufa(tkufa_num: int):

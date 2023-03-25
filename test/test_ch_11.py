@@ -3,7 +3,6 @@ import gematria
 
 
 def test_halacha_8():
-
     position = angle.angle("ע", "ל", "מ")
     assert gematria.degree_to_mazal(position.degrees) == "תאומים"
     position.to_degree_in_mazal()

@@ -41,7 +41,12 @@ def test_tkufa_time():
         assert tkufot[nissan][1] % 6 == 0
 
         tamuz = gematria.tkufa_to_num("תמוז")
-        assert tkufot[tamuz][1:] in [(7, 30.0), (1, 30.0), (7 + 12, 30.0), (1 + 12, 30.0)]
+        assert tkufot[tamuz][1:] in [
+            (7, 30.0),
+            (1, 30.0),
+            (7 + 12, 30.0),
+            (1 + 12, 30.0),
+        ]
 
         tishrey = gematria.tkufa_to_num("תשרי")
         assert tkufot[tishrey][1:] in [(9, 0.0), (3, 0.0), (9 + 12, 0.0), (3 + 12, 0.0)]

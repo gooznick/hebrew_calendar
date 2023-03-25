@@ -18,7 +18,7 @@ def test_from_georgian():
     today = date(2023, 3, 19)
     assert HDate(26, 6, 5783) == from_georgian(today)
 
-    today = ephem.Date('2023/3/19')
+    today = ephem.Date("2023/3/19")
     assert HDate(26, 6, 5783) == from_georgian(today)
 
 
@@ -28,10 +28,10 @@ def test_hebrew_vs_georgian():
     # According to wikipedia, it should be -3760,9,21
     #   (It should be something with the 0.5 of the ephem.Date value)
     # g_first = date(-3760, 9, 22) # python's date can evaluate BC
-    e_first = ephem.Date('-3760/9/22')
+    e_first = ephem.Date("-3760/9/22")
     h_today = HDate(26, 6, 5783)
     g_today = date(2023, 3, 19)
-    e_today = ephem.Date('2023/3/19')
+    e_today = ephem.Date("2023/3/19")
     h_diff = Months.days_diff(h_first, h_today)
     e_diff = int(e_today - e_first)
     assert h_diff == e_diff
@@ -47,12 +47,6 @@ def test_hebrew_vs_georgian():
     h_diff = Months.days_diff(h_state, h_today)
     h_diff = Months.days_diff(h_state, h_today)
     g_diff = (g_today - g_state).days
-    assert h_diff == g_diff
-
-    h_rosh = HDate("א", "תשרי", "ה-תשפג")
-    g_rosh = date(2022, 9, 26)
-    h_diff = Months.days_diff(h_rosh, h_today)
-    g_diff = (g_today - g_rosh).days
     assert h_diff == g_diff
 
     h_rosh = HDate("א", "תשרי", "ה-תשפג")

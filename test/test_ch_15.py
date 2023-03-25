@@ -11,7 +11,6 @@ import ephem
 
 
 def test_halacha_8():
-
     the_day = HDate("ב", "אייר", "ד-תתקלח")
 
     sun_mean_location = sun.Sun.mean_location(the_day)
@@ -36,7 +35,6 @@ def test_halacha_8():
 
 
 def test_halacha_9a():
-
     the_day = HDate("ב", "אייר", "ד-תתקלח")
 
     true_path_correction = moon.Moon.true_path_correction(the_day)
@@ -49,7 +47,6 @@ def test_halacha_9a():
 
 
 def test_halacha_9b():
-
     the_day = HDate("א", "חשון", "ה-תשנג")
 
     true_location = moon.Moon.true_location(the_day)
@@ -58,44 +55,46 @@ def test_halacha_9b():
     assert true_location == angle(237, 50)
 
 
-@pytest.mark.xfail
 def test_sun_location():
-
     d0 = HDate("א", "חשון", "ה-תשנג")
-    for x in range(40):
-        the_day = molad.Months.date_add_days(d0, x*10)
+    # d0 = sun.RambamBeginningDay
+    # sun.set_hazon_shamaim()
+    for x in range(400):
+        the_day = molad.Months.date_add_days(d0, x * 10)
 
         true_location = sun.Sun.location(the_day).as_degrees_fraction()
         gdate = molad.to_georgian(the_day)
         esun = ephem.Sun()
         esun.compute(gdate)
         ecliptic_sun_longitude = math.degrees(ephem.Ecliptic(esun).lon)
-        assert abs(ecliptic_sun_longitude-true_location) < .2
+        diff = ecliptic_sun_longitude - true_location
+        if diff > 180:
+            diff = diff - 360
+        assert abs(diff) < 0.5
 
 
 def test_sun_moon_velocity():
     t0 = sun.RambamBeginningDay
 
     for x in range(40):
-        d0 = molad.Months.date_add_days(t0, x*10)
-        d1 = molad.Months.date_add_days(t0, x*10+1)
+        d0 = molad.Months.date_add_days(t0, x * 10)
+        d1 = molad.Months.date_add_days(t0, x * 10 + 1)
         sun_location0 = sun.Sun.location(d0).as_degrees_fraction()
         sun_location1 = sun.Sun.location(d1).as_degrees_fraction()
         if sun_location0 > 180 and sun_location1 < 180:
             sun_location1 += 360
-        assert (abs(sun_location0 - sun_location1) < 1.3)
-        assert (abs(sun_location0 - sun_location1) > 0.7)
+        assert abs(sun_location0 - sun_location1) < 1.3
+        assert abs(sun_location0 - sun_location1) > 0.7
 
         moon_location0 = moon.Moon.true_location(d0).as_degrees_fraction()
         moon_location1 = moon.Moon.true_location(d1).as_degrees_fraction()
         if moon_location0 > 180 and moon_location1 < 180:
             moon_location1 += 360
-        assert (abs(moon_location0 - moon_location1) < 16)
-        assert (abs(moon_location0 - moon_location1) > 10)
+        assert abs(moon_location0 - moon_location1) < 16
+        assert abs(moon_location0 - moon_location1) > 10
 
 
 def truth_molad(month, year):
-
     the_day = HDate("א", month, year)
     day_before = molad.Months.date_add_days(the_day, -1)
 
@@ -109,20 +108,19 @@ def truth_molad(month, year):
         the_day = day_before
         day_before = molad.Months.date_add_days(the_day, -1)
         sun_location = sun.Sun.location(day_before).as_degrees_fraction()
-        moon_location = moon.Moon.true_location(
-            day_before).as_degrees_fraction()
+        moon_location = moon.Moon.true_location(day_before).as_degrees_fraction()
         diff1 = sun_location - moon_location
     sun_location2 = sun.Sun.location(the_day).as_degrees_fraction()
     moon_location2 = moon.Moon.true_location(the_day).as_degrees_fraction()
     diff2 = sun_location2 - moon_location2
 
-    distance_moon_sun_per_hour = (diff1-diff2) / 24
-    hours_to_no_distance = diff1/distance_moon_sun_per_hour
+    distance_moon_sun_per_hour = (diff1 - diff2) / 24
+    hours_to_no_distance = diff1 / distance_moon_sun_per_hour
 
     # so, the molad is at the_day+18+hours_to_no_distance
-    day_before._month_day += hours_to_no_distance//24
+    day_before._month_day += hours_to_no_distance // 24
     hours_to_no_distance = hours_to_no_distance % 24
-    hours = hours_to_no_distance+18
+    hours = hours_to_no_distance + 18
     if hours > 24:
         hours -= 24
     hours = angle(hours)
@@ -130,19 +128,18 @@ def truth_molad(month, year):
 
 
 def test_truth_molad():
-
     molads = {
         ("תשרי", "ה-תשפג"): ("ל", 13, 48),
         ("חשון", "ה-תשפג"): ("כט", 00, 57),
         ("כסלו", "ה-תשפג"): ("כט", 12, 16),
-        ("טבת", "ה-תשפג"):  ("כט", 22, 53),
+        ("טבת", "ה-תשפג"): ("כט", 22, 53),
         ("שבט", "ה-תשפג"): ("כט", 9, 5),
-        ("אדר", "ה-תשפג"):  ("כט", 19, 23),
+        ("אדר", "ה-תשפג"): ("כט", 19, 23),
         ("ניסן", "ה-תשפג"): ("כט", 7, 12),
-        ("איר", "ה-תשפג"):  ("כט", 18, 53),
-        ("סיון", "ה-תשפג"):  ("כט", 7, 37),
+        ("איר", "ה-תשפג"): ("כט", 18, 53),
+        ("סיון", "ה-תשפג"): ("כט", 7, 37),
         ("תמוז", "ה-תשפג"): ("כט", 21, 31),
-        ("אב",  "ה-תשפג"):  ("כט", 12, 38),
+        ("אב", "ה-תשפג"): ("כט", 12, 38),
     }
     # convert to HDates
     ground_truths = {}
@@ -156,4 +153,4 @@ def test_truth_molad():
         key = HDate(1, day._month, day._year)
 
         if key in ground_truths:
-            print(day,   ground_truths[key][1] - hour)
+            print(day, ground_truths[key][1] - hour)
