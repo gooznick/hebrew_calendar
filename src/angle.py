@@ -1,4 +1,5 @@
 import gematria
+import copy
 
 
 class angle(object):
@@ -14,12 +15,18 @@ class angle(object):
     THIRDS_IN_CIRCLE = DEGREES * (PARTS**3)
 
     def __init__(self, degrees=0, parts=0, seconds=0, thirds=0):
+        if type(degrees) == angle:
+            self = copy.copy(degrees)
+            return
         self._degrees = gematria.str_to_num(degrees)
         self._parts = gematria.str_to_num(parts)  # חלקים
         self._seconds = gematria.str_to_num(seconds)  # שניות
         self._thirds = gematria.str_to_num(thirds)  # שלשיות
 
         self.__normalize()
+
+    def copy(self):
+        return copy.copy(self)
 
     def __str__(self):
         return f"שלישיות {self._thirds} שניות {self._seconds} חלקים {self._parts} מעלות {self._degrees}"
@@ -163,7 +170,8 @@ class angle(object):
         >>> 10 * angle(7,1,2)
         angle(70, 10, 20, 0.0)
         """
-        res = angle(self._degrees, self._parts, self._seconds, self._thirds) * scalar
+        res = angle(self._degrees, self._parts,
+                    self._seconds, self._thirds) * scalar
         return res
 
     def __gt__(self, other):
