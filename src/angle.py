@@ -170,8 +170,7 @@ class angle(object):
         >>> 10 * angle(7,1,2)
         angle(70, 10, 20, 0.0)
         """
-        res = angle(self._degrees, self._parts,
-                    self._seconds, self._thirds) * scalar
+        res = angle(self._degrees, self._parts, self._seconds, self._thirds) * scalar
         return res
 
     def __gt__(self, other):

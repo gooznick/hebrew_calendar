@@ -133,8 +133,7 @@ class Moon:
         מקום הירח האמיתי לשעת הראיה, פרק ט"ו הלכה ד
         """
 
-        true_path_correction = Moon.true_path_correction(
-            date).as_degrees_fraction()
+        true_path_correction = Moon.true_path_correction(date).as_degrees_fraction()
         true_path = Moon.true_path(date)
         mean_location = Moon.mean_location_on_sunset(date)
         if true_path.as_degrees_fraction() < 180:

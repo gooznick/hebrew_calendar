@@ -18,13 +18,12 @@ class EclipticLatitude:
     def compute(date: HDate):
         """
         חישוב רוחב הירח
-        פרק יז הלכה י
+        פרק טז הלכה י
 
-        returns : is_south, angle
+        returns : is_south, latitude
         """
         location = moon.Moon.true_location(date).as_degrees_fraction()
-        head = EclipticLatitude.compute_head_location(
-            date).as_degrees_fraction()
+        head = EclipticLatitude.compute_head_location(date).as_degrees_fraction()
         diff = location - head
         corrections = {
             0: angle(0),
@@ -39,7 +38,7 @@ class EclipticLatitude:
             90: angle(5),
         }
         diff = diff % 360  # positive
-        is_south = (diff > 180)
+        is_south = diff > 180
         if diff > 270:
             diff = 360 - diff
         elif diff > 180:
@@ -48,9 +47,9 @@ class EclipticLatitude:
             diff = 180 - diff
         rounded = diff // 10 * 10
         low = corrections[int(rounded)]
-        high = corrections[int(rounded)+10]
-        units = diff//1-rounded
-        result = low + (high-low)*(units/10)
+        high = corrections[int(rounded) + 10]
+        units = diff // 1 - rounded
+        result = low + (high - low) * (units / 10)
         return is_south, result
 
     @staticmethod
@@ -70,7 +69,7 @@ moon_plane_coefs = {
     "t0": RambamBeginningDay,
     "x0": angle("קפ", "נז", "כח"),  # פרק יז הלכה ב
     # "v": (angle(0, "לא", "מז")/10.0),
-    "v": (angle("קסט", "לא", "מ") + angle(360)*1) / 10000,
+    "v": (angle("קסט", "לא", "מ") + angle(360) * 1) / 10000,
 }
 
 
