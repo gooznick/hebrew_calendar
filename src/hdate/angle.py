@@ -1,4 +1,4 @@
-from . import gematria
+from hdate import gematria
 import copy
 
 

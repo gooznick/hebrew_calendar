@@ -1,10 +1,10 @@
-from . import gematria
-from .angle import angle
-from .hdate import HDate
-from . import molad
-from . import sun
-from . import moon
-from . import ecliptic_lat
+from hdate import gematria
+from hdate.angle import angle
+from hdate.hdate import HDate
+from hdate import molad
+from hdate import sun
+from hdate import moon
+from hdate import ecliptic_lat
 
 import math
 

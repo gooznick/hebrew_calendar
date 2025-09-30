@@ -15,6 +15,23 @@ def test_date_add_days():
         assert Months.date_add_days(
             date, d) == Months.date_add_days_o_n_(date, d)
 
+def test_year_pattern():
+    assert Months.year_pattern(5787) == "זשה"
+
+    assert Months.year_pattern(5777) == "בחג"
+    assert Months.year_pattern(5778) == "הכז"
+    assert Months.year_pattern(5779) == "בשז"
+    assert Months.year_pattern(5780) == "בשה"
+    assert Months.year_pattern(5781) == "זחא"
+    assert Months.year_pattern(5782) == "גכז"
+    assert Months.year_pattern(5783) == "בשה"
+    assert Months.year_pattern(5784) == "זחג"
+    assert Months.year_pattern(5785) == "השא"
+    assert Months.year_pattern(5786) == "גכה"
+    assert Months.year_pattern(5788) == "זשג"
+    assert Months.year_pattern(5789) == "הכז"
+    assert Months.year_pattern(5790) == "בחה"
+
 
 def test_year_type():
     """

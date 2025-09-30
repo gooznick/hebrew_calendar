@@ -1,7 +1,7 @@
 from collections import Counter
 import matplotlib.pyplot as plt
-import hdate
-import molad
+from hdate import hdate
+from hdate import molad
 import numpy as np
 
 begin, end = 5000, 5999

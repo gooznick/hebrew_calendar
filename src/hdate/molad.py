@@ -26,6 +26,11 @@ class YearType(Enum):
     ORDINAL = 2  # כסדרה
     FULL = 3  # שלמה
 
+YearTypeChar = {
+    YearType.PARTIAL : "ח", # חסרה
+    YearType.ORDINAL : "כ", # כסדרה
+    YearType.FULL : "ש", # שלמה
+}
 
 YEAR_TYPES = {
     # פרק ח הלכה ז
@@ -256,6 +261,8 @@ class Months:
                 molad_tishrei, is_former_leap
             )
         months_head, activated[0] = Months.potpone_rule_1(months_head)
+        if months_head==0:
+            months_head=7
 
         return months_head, activated
 
@@ -263,6 +270,7 @@ class Months:
     def year_begin_weekday(year: typing.Union[int, str]):
         """
         Apply postpone rules on first month's molad (תשרי), and get day of month's head ראש חודש
+        Sunday is 1, Saturday is 7
 
         Examples:
             >>> Months.year_begin_weekday(5782)
@@ -304,6 +312,37 @@ class Months:
         days_diff = (next_first_month_head - year_begin_weekday - 1) % 7
         return YEAR_TYPES[is_leap][days_diff]
 
+    @staticmethod
+    def year_pattern(year: typing.Union[int, str]):
+        """
+        Check the type of the year.
+        Three letters :
+        1. The weekday of ראש השנה
+        2. [כסדרה]/[שלמה]/[חסרה]
+        3. The weekdat of פסח
+
+        Examples:
+            >>> Months.year_pattern(5787)
+            'זשה'
+
+        """
+        year_type = Months.year_type(year)
+        rosh_hashona_weekday = Months.year_begin_weekday(year)[0]
+        is_leap = leapYear.is_leap(year)
+        days_to_passover = 30 + 29 + 29 + 29 + 30 + 29 + 14
+        if is_leap:
+            days_to_passover += 30
+        if year_type==YearType.FULL:
+            days_to_passover += 2
+        elif year_type==YearType.ORDINAL:
+            days_to_passover += 1
+        passover_weekday = (rosh_hashona_weekday+days_to_passover)%7
+        if passover_weekday==0:
+            passover_weekday=7
+
+        return gematria.num_to_str(rosh_hashona_weekday) + YearTypeChar[year_type] + gematria.num_to_str(passover_weekday)
+
+    
     @staticmethod
     def months_length(year: typing.Union[int, str]):
         """
