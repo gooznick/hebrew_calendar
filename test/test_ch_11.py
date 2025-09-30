@@ -1,5 +1,5 @@
-import angle
-import gematria
+from hdate import angle
+from hdate import gematria
 
 
 def test_halacha_8():

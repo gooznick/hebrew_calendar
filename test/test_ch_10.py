@@ -1,8 +1,8 @@
-import duration
-import leap_years
-import molad
-import gematria
-from hdate import HDate
+from hdate import duration
+from hdate import leap_years
+from hdate import molad
+from hdate import gematria
+from hdate.hdate import HDate
 
 
 def test_rav_ada_sun_year_moon_year():

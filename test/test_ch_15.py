@@ -1,9 +1,9 @@
-from angle import angle
-from hdate import HDate
+from hdate.angle import angle
+from hdate.hdate import HDate
 import pytest
-import moon
-import sun
-import molad
+from hdate import moon
+from hdate import sun
+from hdate import molad
 import math
 import datetime
 

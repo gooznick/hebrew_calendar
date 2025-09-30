@@ -1,4 +1,4 @@
-import gematria
+from . import gematria
 import copy
 
 

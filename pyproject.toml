@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hdate"
+version = "0.3.0"
+description = "Hebrew date utilities and conversions"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "gooznick", email = "gooznick@gmail.com" }
+]
+
+# Recommended dependencies
+dependencies = [
+    "pytest",
+    "pyephem",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

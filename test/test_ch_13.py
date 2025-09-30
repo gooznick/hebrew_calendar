@@ -1,9 +1,9 @@
-import sun
-import gematria
-from angle import angle
-from hdate import HDate
+from hdate import sun
+from hdate import gematria
+from hdate.angle import angle
+from hdate.hdate import HDate
 import pytest
-import molad
+from hdate import molad
 
 
 def test_halacha_4():

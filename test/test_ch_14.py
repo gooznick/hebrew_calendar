@@ -1,8 +1,8 @@
-from angle import angle
-from hdate import HDate
+from hdate.angle import angle
+from hdate.hdate import HDate
 import pytest
-import moon
-import sun
+from hdate import moon
+from hdate import sun
 
 
 def test_halacha_2():

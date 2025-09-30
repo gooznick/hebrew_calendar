@@ -1,5 +1,5 @@
-from hdate import HDate
-from molad import Months, to_georgian, to_georgian_BC, from_georgian
+from hdate.hdate import HDate
+from hdate.molad import Months, to_georgian, to_georgian_BC, from_georgian
 from datetime import date
 import ephem
 

@@ -1,5 +1,5 @@
-from molad import Months
-from hdate import HDate
+from hdate.molad import Months
+from hdate.hdate import HDate
 
 
 def test_days_diff():

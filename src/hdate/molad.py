@@ -5,10 +5,10 @@ import typing
 from enum import Enum
 import math
 
-from leap_years import leapYear
-import duration
-import gematria
-from hdate import HDate
+from .leap_years import leapYear
+from . import duration
+from . import gematria
+from .hdate import HDate
 from datetime import date, timedelta
 
 try:

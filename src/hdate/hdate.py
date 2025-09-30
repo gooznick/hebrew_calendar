@@ -3,8 +3,8 @@ Class for hebrew date representation
 """
 import typing
 
-from leap_years import leapYear
-import gematria
+from .leap_years import leapYear
+from . import gematria
 
 
 class HDate:

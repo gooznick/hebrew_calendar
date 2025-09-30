@@ -3,10 +3,10 @@ Class for hebrew date representation
 """
 import typing
 
-import gematria
-from angle import angle
-from hdate import HDate
-import molad
+from . import gematria
+from .angle import angle
+from .hdate import HDate
+from . import molad
 import math
 
 

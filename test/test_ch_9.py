@@ -1,7 +1,7 @@
-import duration
-import leap_years
-import molad
-import gematria
+from hdate import duration
+from hdate import leap_years
+from hdate import molad
+from hdate import gematria
 
 
 def test_sun_year_diff():

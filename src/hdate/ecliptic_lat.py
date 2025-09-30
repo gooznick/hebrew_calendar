@@ -1,12 +1,12 @@
-import gematria
-from angle import angle
-from hdate import HDate
-import molad
-import sun
+from . import gematria
+from .angle import angle
+from .hdate import HDate
+from . import molad
+from . import sun
+from . import moon
 
 import math
 
-import moon
 
 
 class EclipticLatitude:
