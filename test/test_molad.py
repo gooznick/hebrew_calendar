@@ -1,7 +1,9 @@
 from hdate.hdate import HDate
-from hdate.molad import (Months, YEARS_PATTERNS)
+from hdate.molad import (Months, YEARS_PATTERNS, YEARS_PATTERNS_LEAP, YEARS_PATTERNS_NON_LEAP)
+from hdate.gematria import (MONTHS_LEAP, str_to_num, num_to_str)
 
 from collections import Counter
+import copy
 
 def test_days_diff():
     for y in range(1, 100):
@@ -41,7 +43,47 @@ def test_year_patterns():
         patterns[pat] += 1
         assert pat in YEARS_PATTERNS
     assert len(patterns) == 14
+
+def test_find_possible_weekday_per_date():
+    month_days = [30, 29, 29, 29, 30, 29, 0 , 0, 30, 29 ,30 ,29 ,30 ,29]
+    dates = {}
+
+    def update_dates(dates, months, current_day):
+        for month, days in enumerate(months):
+            for day in range(days):
+                val = dates.setdefault((month, day), set())
+                val.add(current_day%7)
+                current_day= current_day+1
+
+    for pattern in YEARS_PATTERNS_NON_LEAP:
+        specific_month_days=copy.copy(month_days)
+        if pattern[1] == "ש":
+            specific_month_days[1]+=1
+            specific_month_days[2]+=1
+        elif pattern[1] == "כ":
+            specific_month_days[2]+=1
+        
+        update_dates(dates, specific_month_days, str_to_num(pattern[0]))
+    month_days = [30, 29, 29, 29, 30, 0, 29 , 30, 30, 29 ,30 ,29 ,30 ,29]
+    for pattern in YEARS_PATTERNS_LEAP:
+        specific_month_days=copy.copy(month_days)
+        if pattern[1] == "ש":
+            specific_month_days[1]+=1
+            specific_month_days[2]+=1
+        elif pattern[1] == "כ":
+            specific_month_days[2]+=1                    
+        update_dates(dates, specific_month_days, str_to_num(pattern[0]))
+    months_names = copy.copy(MONTHS_LEAP)
+    months_names.insert(5, "אדר")
+    months_names[6] = "אדר א'"
+
+    # TODO: move to doc
+    for k,v in dates.items():
+        print(f"{num_to_str(k[1]+1)[::-1]} {months_names[k[0]]}"[::-1])
+        print("".join([num_to_str(vv if vv!=0 else 7) for vv in v][::-1]))
     
+
+
 def test_year_type():
     """
     Test year type does not fail on
