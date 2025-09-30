@@ -1,6 +1,7 @@
 """
 Class for hebrew date representation
 """
+
 import typing
 
 from .leap_years import leapYear

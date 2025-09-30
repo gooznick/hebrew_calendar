@@ -1,6 +1,7 @@
 """
 New moon computations
 """
+
 import typing
 from enum import Enum
 import math
@@ -26,10 +27,11 @@ class YearType(Enum):
     ORDINAL = 2  # כסדרה
     FULL = 3  # שלמה
 
+
 YearTypeChar = {
-    YearType.PARTIAL : "ח", # חסרה
-    YearType.ORDINAL : "כ", # כסדרה
-    YearType.FULL : "ש", # שלמה
+    YearType.PARTIAL: "ח",  # חסרה
+    YearType.ORDINAL: "כ",  # כסדרה
+    YearType.FULL: "ש",  # שלמה
 }
 
 YEAR_TYPES = {
@@ -39,25 +41,26 @@ YEAR_TYPES = {
     True: {4: YearType.PARTIAL, 5: YearType.ORDINAL, 6: YearType.FULL},
 }
 
-YEARS_PATTERNS_LEAP = { 
- 'השג',
-  'בחה',
-  'זחג',
-  'גכז',
-  'זשה',
-  'בשז',
-  'החא',
+YEARS_PATTERNS_LEAP = {
+    "השג",
+    "בחה",
+    "זחג",
+    "גכז",
+    "זשה",
+    "בשז",
+    "החא",
 }
 YEARS_PATTERNS_NON_LEAP = {
-  'הכז',
-  'זשג',
-  'בשה',
-  'גכה',
-  'בחג',
-  'זחא',
-  'השא',
+    "הכז",
+    "זשג",
+    "בשה",
+    "גכה",
+    "בחג",
+    "זחא",
+    "השא",
 }
 YEARS_PATTERNS = YEARS_PATTERNS_LEAP | YEARS_PATTERNS_NON_LEAP
+
 
 def to_georgian_BC(hdate: HDate):
     h_first = HDate(25, 12, 0)
@@ -157,8 +160,7 @@ class Months:
         year = gematria.year_to_num(year)
         months_in_years = Months._months_in_years_o_1_(year, begin)
         return (
-            months_in_years +
-            gematria.month_to_num(leapYear.is_leap(year), month) - 1
+            months_in_years + gematria.month_to_num(leapYear.is_leap(year), month) - 1
         )
 
     @staticmethod
@@ -273,15 +275,14 @@ class Months:
         months_head = molad_tishrei.days
         months_head, activated[1] = Months.potpone_rule_2(molad_tishrei)
         if not any(activated):
-            months_head, activated[2] = Months.potpone_rule_3(
-                molad_tishrei, is_leap)
+            months_head, activated[2] = Months.potpone_rule_3(molad_tishrei, is_leap)
         if not any(activated):
             months_head, activated[3] = Months.potpone_rule_4(
                 molad_tishrei, is_former_leap
             )
         months_head, activated[0] = Months.potpone_rule_1(months_head)
-        if months_head==0:
-            months_head=7
+        if months_head == 0:
+            months_head = 7
 
         return months_head, activated
 
@@ -351,17 +352,20 @@ class Months:
         days_to_passover = 30 + 29 + 29 + 29 + 30 + 29 + 14
         if is_leap:
             days_to_passover += 30
-        if year_type==YearType.FULL:
+        if year_type == YearType.FULL:
             days_to_passover += 2
-        elif year_type==YearType.ORDINAL:
+        elif year_type == YearType.ORDINAL:
             days_to_passover += 1
-        passover_weekday = (rosh_hashona_weekday+days_to_passover)%7
-        if passover_weekday==0:
-            passover_weekday=7
+        passover_weekday = (rosh_hashona_weekday + days_to_passover) % 7
+        if passover_weekday == 0:
+            passover_weekday = 7
 
-        return gematria.num_to_str(rosh_hashona_weekday) + YearTypeChar[year_type] + gematria.num_to_str(passover_weekday)
+        return (
+            gematria.num_to_str(rosh_hashona_weekday)
+            + YearTypeChar[year_type]
+            + gematria.num_to_str(passover_weekday)
+        )
 
-    
     @staticmethod
     def months_length(year: typing.Union[int, str]):
         """
@@ -420,8 +424,7 @@ class Months:
         # find day of rosh hashana
         year_begin_weekday, _ = Months.year_begin_weekday(date._year)
         # find days to the begining of the month
-        days_from_year_begin = sum(
-            Months.months_length(date._year)[: date._month - 1])
+        days_from_year_begin = sum(Months.months_length(date._year)[: date._month - 1])
         # days from month begin
         days_in_month = date._month_day - 1
         weekday = (
@@ -469,8 +472,7 @@ class Months:
         Count days between beginging (1,1,1) to a specific date
         """
         # count the days from the begining of the year
-        days_from_tishrei = Months.days_diff_o_n_(
-            HDate(1, 1, date._year), date)
+        days_from_tishrei = Months.days_diff_o_n_(HDate(1, 1, date._year), date)
 
         # count the duration between first molad and first of Tishrei
         sinodal_months = Months.months_till(date._year, 1)
@@ -510,8 +512,7 @@ class Months:
             year += 1
 
         # days till the begining of the year
-        days_until_year_begin = Months.days_diff(
-            HDate(1, 1, 1), HDate(1, 1, year))
+        days_until_year_begin = Months.days_diff(HDate(1, 1, 1), HDate(1, 1, year))
 
         return Months.date_add_days_o_n_(
             HDate(1, 1, year), days_diff - days_until_year_begin
@@ -659,13 +660,11 @@ class Months:
         nissan_first_tkufa = nissan_first_molad - first_tkufa
 
         def days_to_tkufa(duration_from_beginning):
-            date = Months.date_add_days(
-                HDate(1, 1, 1), duration_from_beginning.days)
+            date = Months.date_add_days(HDate(1, 1, 1), duration_from_beginning.days)
             return (date, d.hours, d.minutes)
 
         # tkufa of nissan
-        nissans_tkufa_from_begining = sun_year * \
-            (year - 1) + nissan_first_tkufa
+        nissans_tkufa_from_begining = sun_year * (year - 1) + nissan_first_tkufa
         if hours_only:
             nissans_tkufa_from_begining = duration.duration(
                 nissans_tkufa_from_begining.days, nissans_tkufa_from_begining.hours

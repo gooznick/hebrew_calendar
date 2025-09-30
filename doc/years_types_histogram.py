@@ -60,9 +60,11 @@ def main():
     values_pct: List[float] = [100.0 * v / total_years for v in values_abs]
 
     # Colors per bar: one color for leap, another for non-leap.
-    leap_color = "#1f77b4"      # blue-ish
-    nonleap_color = "#ff7f0e"   # orange-ish
-    colors: List[str] = [leap_color] * len(leap_items) + [nonleap_color] * len(nonleap_items)
+    leap_color = "#1f77b4"  # blue-ish
+    nonleap_color = "#ff7f0e"  # orange-ish
+    colors: List[str] = [leap_color] * len(leap_items) + [nonleap_color] * len(
+        nonleap_items
+    )
 
     # Create bar plot
     plt.figure(figsize=(14, 6))
@@ -94,7 +96,6 @@ def main():
 
     plt.tight_layout()
     plt.show()
-
 
 
 if __name__ == "__main__":

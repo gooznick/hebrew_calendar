@@ -8,7 +8,6 @@ from . import moon
 import math
 
 
-
 class EclipticLatitude:
     """
     Calculations of Moon's ecliptic latitude. פרק יז

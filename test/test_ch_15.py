@@ -85,7 +85,8 @@ def test_moon_location():
         if gdate.day == 1:
             continue
         gdate = datetime.datetime(
-            year=gdate.year, month=gdate.month, day=gdate.day-1, hour=18)
+            year=gdate.year, month=gdate.month, day=gdate.day - 1, hour=18
+        )
         emoon = ephem.Moon()
         emoon.compute(gdate)
         ecliptic_moon_longitude = math.degrees(ephem.Ecliptic(emoon).lon)
@@ -113,7 +114,8 @@ def calc_moon_location(date: HDate):
 def calc_moon_location_ephem(date: HDate):
     gdate = molad.to_georgian(date)
     gdate = datetime.datetime(
-        year=gdate.year, month=gdate.month, day=gdate.day-1, hour=18)
+        year=gdate.year, month=gdate.month, day=gdate.day - 1, hour=18
+    )
     emoon = ephem.Moon()
     emoon.compute(gdate)
     return math.degrees(ephem.Ecliptic(emoon).lon)
@@ -157,8 +159,7 @@ def truth_molad(month, year):
         the_day = day_before
         day_before = molad.Months.date_add_days(the_day, -1)
         sun_location = calc_sun_location(day_before)
-        moon_location = calc_moon_location(
-            day_before)
+        moon_location = calc_moon_location(day_before)
         diff1 = sun_location - moon_location
     sun_location2 = calc_sun_location(the_day)
     moon_location2 = calc_moon_location(the_day)
@@ -203,6 +204,6 @@ def test_truth_molad():
             ground_truth_hour = new_moon.datetime().hour + 2
             diff = ground_truth_hour - hour
             if diff > 12:
-                diff = 24-diff
+                diff = 24 - diff
 
             assert diff <= 3
