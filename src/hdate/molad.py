@@ -39,6 +39,25 @@ YEAR_TYPES = {
     True: {4: YearType.PARTIAL, 5: YearType.ORDINAL, 6: YearType.FULL},
 }
 
+YEARS_PATTERNS_LEAP = { 
+ 'השג',
+  'בחה',
+  'זחג',
+  'גכז',
+  'זשה',
+  'בשז',
+  'החא',
+}
+YEARS_PATTERNS_NON_LEAP = {
+  'הכז',
+  'זשג',
+  'בשה',
+  'גכה',
+  'בחג',
+  'זחא',
+  'השא',
+}
+YEARS_PATTERNS = YEARS_PATTERNS_LEAP | YEARS_PATTERNS_NON_LEAP
 
 def to_georgian_BC(hdate: HDate):
     h_first = HDate(25, 12, 0)

@@ -1,6 +1,7 @@
-from hdate.molad import Months
 from hdate.hdate import HDate
+from hdate.molad import (Months, YEARS_PATTERNS)
 
+from collections import Counter
 
 def test_days_diff():
     for y in range(1, 100):
@@ -32,7 +33,15 @@ def test_year_pattern():
     assert Months.year_pattern(5789) == "הכז"
     assert Months.year_pattern(5790) == "בחה"
 
-
+def test_year_patterns():
+    
+    patterns = Counter()
+    for y in range(4000, 6000):
+        pat = Months.year_pattern(y)
+        patterns[pat] += 1
+        assert pat in YEARS_PATTERNS
+    assert len(patterns) == 14
+    
 def test_year_type():
     """
     Test year type does not fail on
