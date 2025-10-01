@@ -12,11 +12,12 @@ from matplotlib.ticker import MaxNLocator
 
 month_days = [30, 29, 29, 29, 30, 29, 0, 0, 30, 29, 30, 29, 30, 29]
 
-# prepare the dictionary 
+# prepare the dictionary
 dates = {}
-for month  in range(14):
+for month in range(14):
     for day in range(30):
         dates.setdefault((month, day), set())
+
 
 def update_dates(dates, months, current_day):
     for month, days in enumerate(months):
@@ -24,6 +25,7 @@ def update_dates(dates, months, current_day):
             val = dates.setdefault((month, day), set())
             val.add(current_day % 7)
             current_day = current_day + 1
+
 
 for pattern in YEARS_PATTERNS_NON_LEAP:
     specific_month_days = copy.copy(month_days)
@@ -44,8 +46,8 @@ for pattern in YEARS_PATTERNS_LEAP:
         specific_month_days[2] += 1
     update_dates(dates, specific_month_days, str_to_num(pattern[0]))
 
-# remove empty 
-dates = {k:v for k,v in dates.items() if v}
+# remove empty
+dates = {k: v for k, v in dates.items() if v}
 
 months_names = copy.copy(MONTHS_LEAP)
 months_names.insert(5, "אדר")
@@ -63,10 +65,7 @@ for k, v in dates.items():
 labels = [" ".join(date.split()[:-1]) + "א' "[::-1] for date in pattern_per_date.keys()]
 y = [len(v) for v in pattern_per_date.values()]
 x = range(len(labels))
-change_idx = [0] + [
-    i for i in range(1, len(labels))
-    if labels[i] != labels[i - 1]
-]
+change_idx = [0] + [i for i in range(1, len(labels)) if labels[i] != labels[i - 1]]
 tick_labels = [str(labels[i]) for i in change_idx]
 plt.figure(figsize=(10, 4))
 plt.plot(x, y, marker="o")  # no custom colors/styles per your requirement

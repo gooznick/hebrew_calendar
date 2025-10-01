@@ -1,12 +1,7 @@
 from hdate.hdate import HDate
-from hdate.molad import (
-    YEARS_PATTERNS,
-    Months
-)
+from hdate.molad import YEARS_PATTERNS, Months
 
 from collections import Counter
-
-
 
 
 def test_days_diff():
@@ -48,6 +43,7 @@ def test_year_patterns():
         patterns[pat] += 1
         assert pat in YEARS_PATTERNS
     assert len(patterns) == 14
+
 
 def test_year_type():
     """
