@@ -515,7 +515,9 @@ class Months:
         days_until_year_begin = Months.days_diff(HDate(1, 1, 1), HDate(1, 1, year))
         if days_until_year_begin > days_diff:
             # It's before this year !
-            
+            return Months.date_add_days_o_n_(
+                HDate(1, 1, 1), days_diff)        
+            # this should be much faster, but don't work:    
             return Months.date_add_days_o_n_(
                 HDate(1, 1, year-1), days_diff - days_until_year_begin + Months.year_days(year)
             )            
