@@ -3,11 +3,12 @@ Class for hebrew date representation
 """
 
 import typing
+import functools
 
 from .leap_years import leapYear
 from . import gematria
 
-
+@functools.total_ordering
 class HDate:
     """
     A hebrew date
@@ -52,6 +53,16 @@ class HDate:
             and self._month == other._month
             and self._month_day == other._month_day
         )
+
+    def __lt__(self, other):
+        if not isinstance(other, HDate):
+            return NotImplemented
+
+        return (
+            (self._year, self._month, self._month_day)
+            < (other._year, other._month, other._month_day)
+        )
+
 
     def __hash__(self):
         return hash((self._year, self._month, self._month_day))
