@@ -486,7 +486,7 @@ class Months:
     @staticmethod
     def _diff_to_date(days_diff: int):
         """
-        Compute the date with specific number of days for the begining (1,1,1)
+        Compute the date with specific number of days from the begining (1,1,1)
 
         Examples:
             >>> Months._diff_to_date(1)
@@ -513,6 +513,12 @@ class Months:
 
         # days till the begining of the year
         days_until_year_begin = Months.days_diff(HDate(1, 1, 1), HDate(1, 1, year))
+        if days_until_year_begin > days_diff:
+            # It's before this year !
+            
+            return Months.date_add_days_o_n_(
+                HDate(1, 1, year-1), days_diff - days_until_year_begin + Months.year_days(year)
+            )            
 
         return Months.date_add_days_o_n_(
             HDate(1, 1, year), days_diff - days_until_year_begin
@@ -524,15 +530,15 @@ class Months:
         Compute the date with specific number of days after given date
 
         Examples:
-            >>> Months.date_add_days_o_n_(HDate(29, 8, 5782), 1)
+            >>> Months.date_add_days(HDate(29, 8, 5782), 1)
             HDate(30, 8, 5782)
-            >>> Months.date_add_days_o_n_(HDate(29, 8, 5782), 2)
+            >>> Months.date_add_days(HDate(29, 8, 5782), 2)
             HDate(1, 9, 5782)
-            >>> Months.date_add_days_o_n_(HDate(29, 8, 5782), 32)
+            >>> Months.date_add_days(HDate(29, 8, 5782), 32)
             HDate(2, 10, 5782)
-            >>> Months.date_add_days_o_n_(HDate(29, 13, 5782), 1)
+            >>> Months.date_add_days(HDate(29, 13, 5782), 1)
             HDate(1, 1, 5783)
-            >>> Months.date_add_days_o_n_(HDate(29, 13, 5782), 1000)
+            >>> Months.date_add_days(HDate(29, 13, 5782), 1000)
             HDate(25, 9, 5785)
             >>> Months.date_add_days(HDate(4,5,5700), 600)
             HDate(13, 12, 5701)

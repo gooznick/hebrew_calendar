@@ -3,6 +3,14 @@ from hdate.molad import Months, to_georgian, to_georgian_BC, from_georgian
 from datetime import date
 import ephem
 
+def test_bug_in_hdate():
+
+    date = HDate(20, 1 , 2204)
+    d1 = Months.date_add_days(date, 364)
+    assert d1._month_day == 28
+    d1 = Months.date_add_days(date, 365)
+    assert d1._month_day == 29
+
 
 def test_to_georgian_BC():
     h_today = HDate(26, 6, 5783)
@@ -20,6 +28,7 @@ def test_from_georgian():
 
     today = ephem.Date("2023/3/19")
     assert HDate(26, 6, 5783) == from_georgian(today)
+
 
 
 def test_hebrew_vs_georgian():
